@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldFG - Settings</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="platform-header">
+        <a href="home.html" class="platform-logo">🌍 WorldFG</a>
+        <div class="nav-icons">
+            <a href="home.html" class="nav-icon"><i class="fas fa-home"></i></a>
+            <a href="friends.html" class="nav-icon"><i class="fas fa-user-friends"></i></a>
+            <a href="marketplace.html" class="nav-icon"><i class="fas fa-store"></i></a>
+            <a href="live.html" class="nav-icon"><i class="fas fa-video"></i></a>
+            <a href="messages.html" class="nav-icon"><i class="fas fa-comment-dots"></i></a>
+        </div>
+        <a href="profile.html" class="user-menu-trigger">
+            <div class="user-avatar-small" id="headerAvatar">U</div>
+            <span id="headerUserName">User</span>
+        </a>
+    </header>
+
+    <div style="max-width:700px; margin:16px auto; padding:0 16px;">
+        <h1 style="margin-bottom:20px;">⚙️ Settings</h1>
+        
+        <div class="card-widget settings-section">
+            <h3>👤 Account Information</h3>
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="settingsName" placeholder="Your full name">
+            </div>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="settingsEmail" placeholder="Your email">
+            </div>
+            <div class="input-group">
+                <label>Location</label>
+                <input type="text" id="settingsLocation" placeholder="Your location">
+            </div>
+            <button onclick="saveAccountSettings()" class="primary-btn">Save Changes</button>
+        </div>
+        
+        <div class="card-widget settings-section">
+            <h3>🔵 Profile Verification</h3>
+            <p style="color:#94a3b8; margin-bottom:12px;">Get the blue checkmark to verify your identity</p>
+            <button onclick="verifyProfile()" class="primary-btn">Request Verification</button>
+        </div>
+        
+        <div class="card-widget settings-section">
+            <h3>🚀 Boost & Promotion</h3>
+            <p style="color:#94a3b8; margin-bottom:12px;">Boost your posts and marketplace listings</p>
+            <div class="input-group">
+                <label>Select Post/Listing</label>
+                <select id="boostTarget" style="width:100%; padding:10px; background:var(--dark); color:#e2e8f0; border:1px solid var(--border); border-radius:8px;">
+                    <option>Choose content to boost</option>
+                    <option>Latest Post</option>
+                    <option>Marketplace Listing</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Budget ($)</label>
+                <input type="number" id="boostBudget" placeholder="Enter amount">
+            </div>
+            <button onclick="boostContentSettings()" class="primary-btn">Boost Now</button>
+        </div>
+        
+        <div class="card-widget settings-section">
+            <h3>🔒 Privacy</h3>
+            <div class="input-group">
+                <label>Who can see your posts?</label>
+                <select id="privacySetting" style="width:100%; padding:10px; background:var(--dark); color:#e2e8f0; border:1px solid var(--border); border-radius:8px;">
+                    <option>Everyone</option>
+                    <option>Friends Only</option>
+                    <option>Only Me</option>
+                </select>
+            </div>
+            <button onclick="savePrivacy()" class="primary-btn">Save Privacy Settings</button>
+        </div>
+        
+        <div class="card-widget settings-section">
+            <h3>🔑 Change Password</h3>
+            <div class="input-group">
+                <input type="password" id="currentPassword" placeholder="Current password">
+            </div>
+            <div class="input-group">
+                <input type="password" id="newPassword" placeholder="New password">
+            </div>
+            <button onclick="changePassword()" class="primary-btn">Update Password</button>
+        </div>
+        
+        <div class="card-widget settings-section">
+            <h3>🚪 Account</h3>
+            <button onclick="logout()" style="background:var(--danger); color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer;">Log Out</button>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+        function loadSettings() {
+            const user = getCurrentUser();
+            if (!user) return;
+            document.getElementById('settingsName').value = user.fullName || '';
+            document.getElementById('settingsEmail').value = user.email || '';
+            document.getElementById('settingsLocation').value = user.location || '';
+        }
+        
+        function saveAccountSettings() {
+            const user = getCurrentUser();
+            user.fullName = document.getElementById('settingsName').value;
+            user.email = document.getElementById('settingsEmail').value;
+            user.location = document.getElementById('settingsLocation').value;
+            
+            const userInDb = DB.users.find(u => u.id === user.id);
+            if (userInDb) {
+                userInDb.fullName = user.fullName;
+                userInDb.email = user.email;
+                userInDb.location = user.location;
+            }
+            saveDB();
+            addNotification('⚙️ Settings', 'Account settings updated!');
+            alert('✅ Settings saved!');
+        }
+        
+        function boostContentSettings() {
+            const budget = document.getElementById('boostBudget').value;
+            if (budget && !isNaN(budget)) {
+                alert('✅ Content boosted with $' + budget + '!');
+                addNotification('🚀 Boost', 'Content boosted with $' + budget);
+            }
+        }
+        
+        function savePrivacy() {
+            alert('✅ Privacy settings saved!');
+            addNotification('🔒 Privacy', 'Privacy settings updated');
+        }
+        
+        function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const user = getCurrentUser();
+            
+            if (current !== user.password) {
+                alert('❌ Current password is incorrect!');
+                return;
+            }
+            if (newPass.length < 6) {
+                alert('❌ New password must be at least 6 characters!');
+                return;
+            }
+            
+            user.password = newPass;
+            const userInDb = DB.users.find(u => u.id === user.id);
+            if (userInDb) userInDb.password = newPass;
+            saveDB();
+            alert('✅ Password changed successfully!');
+            addNotification('🔑 Security', 'Password changed');
+        }
+        
+        loadSettings();
+        initPage();
+    </script>
+</body>
+</html>

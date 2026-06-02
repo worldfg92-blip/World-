@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldFG - Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .marketplace-full {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        .marketplace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .marketplace-categories {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 8px 0;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .category-pill {
+            padding: 8px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+        .category-pill:hover, .category-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .listing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        .listing-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .listing-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .listing-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        .listing-details {
+            padding: 12px;
+        }
+        .listing-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+        .listing-title {
+            font-size: 14px;
+            margin: 4px 0;
+        }
+        .listing-location {
+            font-size: 12px;
+            color: #64748b;
+        }
+        .listing-description {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        .create-listing-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .boost-badge {
+            display: inline-block;
+            background: var(--warning);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <header class="platform-header">
+        <a href="home.html" class="platform-logo">🌍 WorldFG</a>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="marketSearch" placeholder="Search marketplace..." oninput="filterListings()">
+        </div>
+        <div class="nav-icons">
+            <a href="home.html" class="nav-icon"><i class="fas fa-home"></i></a>
+            <a href="friends.html" class="nav-icon"><i class="fas fa-user-friends"></i></a>
+            <a href="marketplace.html" class="nav-icon active"><i class="fas fa-store"></i></a>
+            <a href="live.html" class="nav-icon"><i class="fas fa-video"></i></a>
+            <a href="messages.html" class="nav-icon"><i class="fas fa-comment-dots"></i></a>
+        </div>
+        <a href="profile.html" class="user-menu-trigger">
+            <div class="user-avatar-small" id="headerAvatar">U</div>
+            <span id="headerUserName">User</span>
+        </a>
+    </header>
+
+    <div class="marketplace-full">
+        <div class="marketplace-header">
+            <h1>🏪 Marketplace</h1>
+            <button class="create-listing-btn" onclick="showCreateListing()">
+                <i class="fas fa-plus"></i> Create New Listing
+            </button>
+        </div>
+
+        <div class="marketplace-categories">
+            <button class="category-pill active" onclick="filterCategory('all', this)">All</button>
+            <button class="category-pill" onclick="filterCategory('clothing', this)">👕 Clothing</button>
+            <button class="category-pill" onclick="filterCategory('electronics', this)">📱 Electronics</button>
+            <button class="category-pill" onclick="filterCategory('cars', this)">🚗 Cars</button>
+            <button class="category-pill" onclick="filterCategory('property', this)">🏠 Property</button>
+            <button class="category-pill" onclick="filterCategory('furniture', this)">🪑 Furniture</button>
+            <button class="category-pill" onclick="filterCategory('other', this)">📦 Other</button>
+        </div>
+
+        <div class="listing-grid" id="listingGrid"></div>
+    </div>
+
+    <!-- Create Listing Modal -->
+    <div class="modal-overlay" id="createListingModal" style="display:none;">
+        <div class="modal-content">
+            <h3 style="margin-bottom:16px;">Create New Listing</h3>
+            <div class="input-group">
+                <label>Title</label>
+                <input type="text" id="listingTitle" placeholder="What are you selling?">
+            </div>
+            <div class="input-group">
+                <label>Category</label>
+                <select id="listingCategory" style="width:100%; padding:10px; background:var(--dark); color:#e2e8f0; border:1px solid var(--border); border-radius:8px;">
+                    <option value="clothing">👕 Clothing</option>
+                    <option value="electronics">📱 Electronics</option>
+                    <option value="cars">🚗 Cars & Vehicles</option>
+                    <option value="property">🏠 Property & Real Estate</option>
+                    <option value="furniture">🪑 Furniture</option>
+                    <option value="other">📦 Other</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Price ($)</label>
+                <input type="number" id="listingPrice" placeholder="Price">
+            </div>
+            <div class="input-group">
+                <label>Location</label>
+                <input type="text" id="listingLocation" placeholder="City, Country">
+            </div>
+            <div class="input-group">
+                <label>Description</label>
+                <textarea id="listingDescription" placeholder="Describe your item..."></textarea>
+            </div>
+            <div class="input-group">
+                <label>Upload Photos</label>
+                <input type="file" id="listingPhotos" accept="image/*" multiple>
+                <div id="photoPreview" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"></div>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:16px;">
+                <button onclick="createListing()" class="primary-btn" style="flex:1;">Create Listing</button>
+                <button onclick="document.getElementById('createListingModal').style.display='none'" style="flex:1; background:var(--border); color:white; border:none; padding:12px; border-radius:8px; cursor:pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        let activeCategory = 'all';
+        let listingPhotos = [];
+
+        if (!DB.marketplaceListings) {
+            DB.marketplaceListings = [
+                { id: 1, title: 'Nike Air Max Sneakers', category: 'clothing', price: 50, location: 'Lagos, Nigeria', description: 'Brand new, size 42', photos: [], seller: 'System', boosted: false },
+                { id: 2, title: 'iPhone 15 Pro', category: 'electronics', price: 800, location: 'Accra, Ghana', description: 'Like new, 256GB', photos: [], seller: 'System', boosted: true },
+                { id: 3, title: 'Toyota Camry 2023', category: 'cars', price: 25000, location: 'Nairobi, Kenya', description: 'Low mileage, excellent condition', photos: [], seller: 'System', boosted: false },
+                { id: 4, title: '3 Bedroom House', category: 'property', price: 150000, location: 'Cape Town, SA', description: 'Modern house with pool', photos: [], seller: 'System', boosted: true },
+                { id: 5, title: 'Leather Sofa Set', category: 'furniture', price: 1200, location: 'London, UK', description: 'Premium leather, 3+2 seater', photos: [], seller: 'System', boosted: false },
+            ];
+            saveDB();
+        }
+
+        function renderListings(category = 'all', search = '') {
+            const grid = document.getElementById('listingGrid');
+            let listings = DB.marketplaceListings || [];
+            
+            if (category !== 'all') {
+                listings = listings.filter(l => l.category === category);
+            }
+            if (search) {
+                listings = listings.filter(l => 
+                    l.title.toLowerCase().includes(search) || 
+                    l.description.toLowerCase().includes(search) ||
+                    l.location.toLowerCase().includes(search)
+                );
+            }
+            
+            grid.innerHTML = listings.map(l => `
+                <div class="listing-card" onclick="viewListing('${l.id}')">
+                    <div class="listing-image">
+                        ${l.photos?.length ? `<img src="${l.photos[0]}" style="width:100%;height:100%;object-fit:cover;">` : 
+                            l.category === 'clothing' ? '👕' :
+                            l.category === 'electronics' ? '📱' :
+                            l.category === 'cars' ? '🚗' :
+                            l.category === 'property' ? '🏠' :
+                            l.category === 'furniture' ? '🪑' : '📦'}
+                    </div>
+                    <div class="listing-details">
+                        <div class="listing-price">$${l.price} ${l.boosted ? '<span class="boost-badge">🚀 BOOSTED</span>' : ''}</div>
+                        <div class="listing-title">${l.title}</div>
+                        <div class="listing-location">📍 ${l.location}</div>
+                        <div class="listing-description">${l.description?.substring(0, 60)}...</div>
+                        <div style="margin-top:8px;">
+                            ${!l.boosted ? `<button class="boost-btn" onclick="event.stopPropagation(); boostListing('${l.id}')">🚀 Boost ($5)</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('') || '<p style="text-align:center; padding:40px; color:#64748b;">No listings found in this category</p>';
+        }
+
+        function filterCategory(cat, el) {
+            activeCategory = cat;
+            document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+            if (el) el.classList.add('active');
+            renderListings(cat, document.getElementById('marketSearch')?.value || '');
+        }
+
+        function filterListings() {
+            renderListings(activeCategory, document.getElementById('marketSearch')?.value.toLowerCase() || '');
+        }
+
+        function showCreateListing() {
+            document.getElementById('createListingModal').style.display = 'flex';
+            listingPhotos = [];
+            document.getElementById('photoPreview').innerHTML = '';
+            document.getElementById('listingPhotos').value = '';
+        }
+
+        document.getElementById('listingPhotos')?.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            listingPhotos = [];
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = '';
+            
+            files.forEach((file, i) => {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    listingPhotos.push(ev.target.result);
+                    preview.innerHTML += `<img src="${ev.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:6px;">`;
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        function createListing() {
+            const title = document.getElementById('listingTitle').value.trim();
+            const category = document.getElementById('listingCategory').value;
+            const price = document.getElementById('listingPrice').value;
+            const location = document.getElementById('listingLocation').value.trim();
+            const description = document.getElementById('listingDescription').value.trim();
+            
+            if (!title || !price) {
+                alert('Please fill in title and price!');
+                return;
+            }
+            
+            const listing = {
+                id: 'listing_' + Date.now(),
+                title,
+                category,
+                price: parseFloat(price),
+                location: location || getCurrentUser()?.location || 'Worldwide',
+                description,
+                photos: listingPhotos,
+                seller: getCurrentUser()?.fullName || 'User',
+                sellerId: getCurrentUser()?.id,
+                boosted: false,
+                time: new Date().toISOString()
+            };
+            
+            DB.marketplaceListings.unshift(listing);
+            saveDB();
+            document.getElementById('createListingModal').style.display = 'none';
+            renderListings(activeCategory);
+            addNotification('🏪 Marketplace', 'New listing created: ' + title);
+            alert('✅ Listing created successfully!');
+        }
+
+        function viewListing(id) {
+            const listing = DB.marketplaceListings.find(l => l.id == id);
+            if (!listing) return;
+            alert(`🏪 ${listing.title}\n\n💰 Price: $${listing.price}\n📍 Location: ${listing.location}\n📝 ${listing.description}\n👤 Seller: ${listing.seller}\n${listing.boosted ? '🚀 Boosted Listing' : ''}`);
+        }
+
+        function boostListing(id) {
+            const listing = DB.marketplaceListings.find(l => l.id == id);
+            if (!listing) return;
+            if (confirm(`🚀 Boost "${listing.title}" for $5?\n\nThis will show your listing to 10x more people!`)) {
+                listing.boosted = true;
+                saveDB();
+                renderListings(activeCategory);
+                addNotification('🚀 Boost', `Listing boosted: ${listing.title}`);
+                alert('✅ Listing boosted! It will reach more buyers.');
+            }
+        }
+
+        // Close modal on outside click
+        document.getElementById('createListingModal')?.addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+
+        renderListings();
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

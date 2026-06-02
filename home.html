@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldFG - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* News ticker */
+        .news-ticker {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .news-ticker-content {
+            display: inline-block;
+            animation: ticker 30s linear infinite;
+            color: #e2e8f0;
+            font-size: 13px;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .news-ticker-content span {
+            margin: 0 30px;
+            color: var(--warning);
+            font-weight: 600;
+        }
+        
+        /* Video embed */
+        .video-embed {
+            width: 100%;
+            border-radius: 8px;
+            margin: 8px 0;
+            background: #000;
+        }
+        
+        /* Ad banner */
+        .ad-banner {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            animation: glow 2s infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(245,158,11,0.3); }
+            50% { box-shadow: 0 0 25px rgba(245,158,11,0.7); }
+        }
+        
+        /* Spotify embed */
+        .spotify-embed {
+            width: 100%;
+            height: 80px;
+            border-radius: 8px;
+            border: none;
+            margin: 8px 0;
+        }
+        
+        /* YouTube embed */
+        .youtube-embed {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            border: none;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="platform-header">
+        <a href="home.html" class="platform-logo">🌍 WorldFG</a>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search people, posts, locations..." oninput="handleSearch()">
+            <div class="search-results-dropdown" id="searchResults"></div>
+        </div>
+        <div class="nav-icons">
+            <a href="home.html" class="nav-icon active"><i class="fas fa-home"></i></a>
+            <a href="friends.html" class="nav-icon"><i class="fas fa-user-friends"></i></a>
+            <a href="marketplace.html" class="nav-icon"><i class="fas fa-store"></i></a>
+            <a href="live.html" class="nav-icon"><i class="fas fa-video"></i></a>
+            <a href="messages.html" class="nav-icon"><i class="fas fa-comment-dots"></i></a>
+        </div>
+        <div class="header-right-icons">
+            <button class="icon-badge" onclick="toggleNotifications()">
+                <i class="fas fa-bell"></i>
+                <span class="badge-count" id="notifBadge">0</span>
+            </button>
+            <a href="profile.html" class="user-menu-trigger">
+                <div class="user-avatar-small" id="headerAvatar">U</div>
+                <span id="headerUserName">User</span>
+            </a>
+            <button class="user-menu-trigger" onclick="toggleUserMenu()">
+                <i class="fas fa-caret-down"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Notifications Panel -->
+    <div class="dropdown-panel" id="notifPanel" style="right:120px;">
+        <h4 style="margin-bottom:8px;">🔔 Notifications</h4>
+        <div id="notifList"><p style="color:#64748b;">No notifications yet</p></div>
+    </div>
+
+    <!-- User Menu -->
+    <div class="dropdown-panel" id="userMenuPanel" style="right:20px;">
+        <a href="profile.html" class="sidebar-link-item"><i class="fas fa-user"></i> My Profile</a>
+        <a href="settings.html" class="sidebar-link-item"><i class="fas fa-cog"></i> Settings</a>
+        <a href="stories.html" class="sidebar-link-item"><i class="fas fa-history"></i> Stories</a>
+        <a href="#" class="sidebar-link-item" onclick="verifyProfile()"><i class="fas fa-check-circle"></i> Get Verified</a>
+        <a href="#" class="sidebar-link-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Left Sidebar -->
+        <aside class="sidebar-left">
+            <div class="card-widget">
+                <a href="profile.html" class="sidebar-link-item" id="sidebarProfileLink">
+                    <div class="user-avatar-small" id="sidebarAvatar">U</div>
+                    <span id="sidebarUserName">Your Name</span>
+                </a>
+                <a href="friends.html" class="sidebar-link-item">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Friends</span>
+                    <span id="friendCountSidebar" style="margin-left:auto;">(0)</span>
+                </a>
+                <a href="stories.html" class="sidebar-link-item">
+                    <i class="fas fa-history"></i>
+                    <span>Stories</span>
+                </a>
+                <a href="live.html" class="sidebar-link-item">
+                    <i class="fas fa-video"></i>
+                    <span>Live Streams</span>
+                </a>
+                <a href="marketplace.html" class="sidebar-link-item">
+                    <i class="fas fa-store"></i>
+                    <span>Marketplace</span>
+                </a>
+                <a href="messages.html" class="sidebar-link-item">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="settings.html" class="sidebar-link-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Feed -->
+        <main class="main-content">
+            <!-- Breaking News Ticker -->
+            <div class="news-ticker">
+                <div class="news-ticker-content" id="newsTicker">
+                    <span>🔴 BREAKING</span> Global markets reach new highs today | 
+                    <span>🎵 MUSIC</span> New album drops from top artists worldwide | 
+                    <span>⚽ SPORTS</span> Champions League finals update | 
+                    <span>📱 TECH</span> Latest AI breakthroughs announced | 
+                    <span>🌍 WORLD</span> International summit concludes with new agreements
+                </div>
+            </div>
+
+            <!-- Stories -->
+            <div class="card-widget">
+                <div class="stories-container" id="storiesContainer">
+                    <div class="story-circle" onclick="createStory()">
+                        <div class="user-avatar-small" style="width:100%; height:100%; border-radius:12px; font-size:40px;" id="storyAvatar">+</div>
+                        <div class="story-user">Create Story</div>
+                        <button class="add-story-btn">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Creator -->
+            <div class="card-widget">
+                <div class="status-creator">
+                    <div class="user-avatar-small" id="feedAvatar">U</div>
+                    <input type="text" id="statusInput" placeholder="What's on your mind? Share with the universe..." onkeypress="if(event.key==='Enter')createPost()">
+                </div>
+                <div class="status-actions">
+                    <button class="status-action-btn" onclick="goLive()">
+                        <i class="fas fa-video" style="color:#ef4444;"></i> Live Video
+                    </button>
+                    <button class="status-action-btn" onclick="document.getElementById('mediaUpload').click()">
+                        <i class="fas fa-camera" style="color:#10b981;"></i> Photo/Video
+                    </button>
+                    <button class="status-action-btn" onclick="createPost()">
+                        <i class="fas fa-smile" style="color:#f59e0b;"></i> Post
+                    </button>
+                </div>
+                <input type="file" id="mediaUpload" accept="image/*,video/*" capture="environment" style="display:none;" onchange="handleMediaUpload(event)">
+            </div>
+
+            <!-- Featured Ad Banner -->
+            <div class="ad-banner" onclick="window.open('https://www.worldfg.com', '_blank')">
+                🚀 Boost Your Business on WorldFG - Reach Millions Worldwide! | Sponsored
+            </div>
+
+            <!-- Real Music - Spotify Embed -->
+            <div class="post-card">
+                <div class="post-header-info">
+                    <div class="post-avatar" style="background:#1DB954;">🎵</div>
+                    <div>
+                        <strong>Spotify Music</strong> <i class="fas fa-check-circle verified-check"></i>
+                        <div style="font-size:12px; color:#64748b;">Sponsored • Top Charts</div>
+                    </div>
+                </div>
+                <p>🎧 Trending Now - Global Top 50 Hits</p>
+                <iframe class="spotify-embed" src="https://open.spotify.com/embed/playlist/37i9dQZEVXbMDoHDwVN2tF" allow="encrypted-media" style="height:152px;"></iframe>
+                <div class="post-reaction-bar">
+                    <button class="reaction-btn">👍 Like</button>
+                    <button class="reaction-btn">❤️ Love</button>
+                    <button class="reaction-btn">💬 Comment</button>
+                    <button class="reaction-btn">🔄 Share</button>
+                </div>
+            </div>
+
+            <!-- Real News Video - YouTube -->
+            <div class="post-card">
+                <div class="post-header-info">
+                    <div class="post-avatar" style="background:#FF0000;">📰</div>
+                    <div>
+                        <strong>BBC News</strong> <i class="fas fa-check-circle verified-check"></i>
+                        <div style="font-size:12px; color:#64748b;">Sponsored • World News</div>
+                    </div>
+                </div>
+                <p>🌍 Latest Global News Update - Stay informed with real-time headlines from around the world</p>
+                <iframe class="youtube-embed" src="https://www.youtube.com/embed/9Auq9mYxFEE" allowfullscreen></iframe>
+                <div class="post-reaction-bar">
+                    <button class="reaction-btn">👍 Like</button>
+                    <button class="reaction-btn">❤️ Love</button>
+                    <button class="reaction-btn">😂 Laugh</button>
+                    <button class="reaction-btn">💬 Comment</button>
+                    <button class="reaction-btn">🔄 Share</button>
+                </div>
+            </div>
+
+            <!-- Real Comedy Video -->
+            <div class="post-card">
+                <div class="post-header-info">
+                    <div class="post-avatar" style="background:#FF4500;">😂</div>
+                    <div>
+                        <strong>Comedy Central</strong> <i class="fas fa-check-circle verified-check"></i>
+                        <div style="font-size:12px; color:#64748b;">Sponsored • Trending Comedy</div>
+                    </div>
+                </div>
+                <p>😂 Trending Comedy Skits - Laugh out loud with the funniest videos worldwide!</p>
+                <iframe class="youtube-embed" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                <div class="post-reaction-bar">
+                    <button class="reaction-btn">😂 Laugh</button>
+                    <button class="reaction-btn">❤️ Love</button>
+                    <button class="reaction-btn">👍 Like</button>
+                    <button class="reaction-btn">💬 Comment</button>
+                    <button class="reaction-btn">🔄 Share</button>
+                </div>
+            </div>
+
+            <!-- Another Ad -->
+            <div class="ad-banner" onclick="window.open('https://www.worldfg.com/marketplace', '_blank')">
+                🏪 WorldFG Marketplace - Sell Your Products to the Universe! | Start Selling Now
+            </div>
+
+            <!-- Tech News Video -->
+            <div class="post-card">
+                <div class="post-header-info">
+                    <div class="post-avatar" style="background:#00C851;">📱</div>
+                    <div>
+                        <strong>Tech Insider</strong> <i class="fas fa-check-circle verified-check"></i>
+                        <div style="font-size:12px; color:#64748b;">Sponsored • Technology</div>
+                    </div>
+                </div>
+                <p>🚀 Latest Technology & Gadgets Review - What's new in tech this week</p>
+                <iframe class="youtube-embed" src="https://www.youtube.com/embed/FT3ODSg1GFE" allowfullscreen></iframe>
+                <div class="post-reaction-bar">
+                    <button class="reaction-btn">👍 Like</button>
+                    <button class="reaction-btn">❤️ Love</button>
+                    <button class="reaction-btn">💬 Comment</button>
+                    <button class="reaction-btn">🔄 Share</button>
+                </div>
+            </div>
+
+            <!-- Posts Feed -->
+            <div id="postsContainer"></div>
+
+            <!-- Music Video -->
+            <div class="post-card">
+                <div class="post-header-info">
+                    <div class="post-avatar" style="background:#E91E63;">🎤</div>
+                    <div>
+                        <strong>Vevo Music</strong> <i class="fas fa-check-circle verified-check"></i>
+                        <div style="font-size:12px; color:#64748b;">Sponsored • Music Video</div>
+                    </div>
+                </div>
+                <p>🎵 Top Music Video - Watch the hottest music videos trending globally</p>
+                <iframe class="youtube-embed" src="https://www.youtube.com/embed/kJQP7kiw5Fk" allowfullscreen></iframe>
+                <div class="post-reaction-bar">
+                    <button class="reaction-btn">❤️ Love</button>
+                    <button class="reaction-btn">👍 Like</button>
+                    <button class="reaction-btn">💬 Comment</button>
+                    <button class="reaction-btn">🔄 Share</button>
+                </div>
+            </div>
+
+            <!-- Bottom Ad -->
+            <div class="ad-banner" onclick="alert('Start your own live stream!')">
+                🔴 Go Live on WorldFG - Broadcast to the Universe! | Start Streaming Free
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar-right">
+            <!-- Trending Topics -->
+            <div class="card-widget">
+                <h4 style="margin-bottom:8px;"><i class="fas fa-fire"></i> Trending Worldwide</h4>
+                <div class="trending-item"><strong>#WorldCup2026</strong><span>2.4M posts</span></div>
+                <div class="trending-item"><strong>#TechNews</strong><span>1.8M posts</span></div>
+                <div class="trending-item"><strong>#MusicVibes</strong><span>950K posts</span></div>
+                <div class="trending-item"><strong>#ComedySkits</strong><span>720K posts</span></div>
+            </div>
+
+            <!-- World News & Updates -->
+            <div class="card-widget">
+                <h4 style="margin-bottom:8px;"><i class="fas fa-newspaper"></i> World News & Updates</h4>
+                <div style="max-height:300px; overflow-y:auto;">
+                    <div class="trending-item">
+                        <strong>🌍 BBC World News</strong>
+                        <span>Global headlines updated hourly</span>
+                    </div>
+                    <div class="trending-item">
+                        <strong>🎵 Spotify Charts</strong>
+                        <span>Top 50 Global playlist</span>
+                    </div>
+                    <div class="trending-item">
+                        <strong>📰 CNN Updates</strong>
+                        <span>Breaking news from all countries</span>
+                    </div>
+                    <div class="trending-item">
+                        <strong>📱 TechCrunch</strong>
+                        <span>Latest technology news</span>
+                    </div>
+                    <div class="trending-item">
+                        <strong>🎬 YouTube Trending</strong>
+                        <span>Viral videos worldwide</span>
+                    </div>
+                    <div class="trending-item">
+                        <strong>📊 Bloomberg</strong>
+                        <span>Global market updates</span>
+                    </div>
+                    <div class="trending-item">
+                        <strong>⚽ ESPN Sports</strong>
+                        <span>Live scores and updates</span>
+                    </div>
+                    <div class="trending-item">
+                        <strong>🎮 IGN Gaming</strong>
+                        <span>Gaming news and reviews</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Now -->
+            <div class="card-widget">
+                <h4 style="margin-bottom:8px;"><span class="live-indicator"></span> Live Now</h4>
+                <div id="liveNowList">
+                    <p style="font-size:13px; color:#94a3b8;">🎵 DJ Mix Show • 1.2K watching</p>
+                    <p style="font-size:13px; color:#94a3b8;">🎮 Gaming Tournament • 856 watching</p>
+                </div>
+            </div>
+
+            <!-- Friend Suggestions -->
+            <div class="card-widget">
+                <h4 style="margin-bottom:8px;">👥 People You May Know</h4>
+                <div id="friendSuggestions"></div>
+            </div>
+
+            <!-- Ad in Sidebar -->
+            <div class="card-widget" style="background:linear-gradient(135deg, #7c3aed, #2563eb); color:white; text-align:center; cursor:pointer;" onclick="window.open('https://www.worldfg.com', '_blank')">
+                <strong>🚀 Advertise Here</strong>
+                <p style="font-size:11px; margin-top:4px;">Reach billions on WorldFG</p>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget-bottom" id="chatWidget" style="display:none;">
+        <div class="chat-widget-header" onclick="toggleChatWindow()">
+            <span><i class="fas fa-comments"></i> Chats</span>
+            <span onclick="event.stopPropagation(); document.getElementById('chatWidget').style.display='none'" style="cursor:pointer;">✕</span>
+        </div>
+        <div id="chatContactsList" style="max-height:250px; overflow-y:auto;"></div>
+        <div id="chatWindowInner" style="display:none;">
+            <div style="padding:8px; background:var(--primary-dark); display:flex; justify-content:space-between; align-items:center;">
+                <span id="chatPartnerLabel">Chat</span>
+                <button onclick="backToContacts()" style="background:none; border:none; color:white; cursor:pointer;">← Back</button>
+            </div>
+            <div id="chatMessagesArea" style="height:250px; overflow-y:auto; padding:12px; background:var(--dark);"></div>
+            <div style="display:flex; padding:8px; gap:8px;">
+                <input type="text" id="chatMsgInput" placeholder="Type a message..." style="flex:1; padding:8px; border-radius:20px; background:var(--dark); border:1px solid var(--border); color:#e2e8f0;" onkeypress="if(event.key==='Enter')sendChatMsg()">
+                <button onclick="sendChatMsg()" style="background:var(--primary); border:none; color:white; padding:8px 16px; border-radius:20px; cursor:pointer;">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

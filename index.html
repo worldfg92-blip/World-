@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldFG - Connect The Universe</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-left">
+            <div class="brand-logo">
+                <i class="fas fa-globe-americas"></i>
+                <h1>WorldFG</h1>
+            </div>
+            <p class="brand-tagline">Connect with the universe. Share moments, discover worlds, and build bridges across all countries and states.</p>
+            <div class="feature-list">
+                <div class="feature-item"><i class="fas fa-check-circle"></i> Real-time messaging across the globe</div>
+                <div class="feature-item"><i class="fas fa-check-circle"></i> Live streaming to the world</div>
+                <div class="feature-item"><i class="fas fa-check-circle"></i> Global marketplace with boost</div>
+                <div class="feature-item"><i class="fas fa-check-circle"></i> Profile verification system</div>
+                <div class="feature-item"><i class="fas fa-check-circle"></i> Connect with anyone, anywhere</div>
+                <div class="feature-item"><i class="fas fa-check-circle"></i> Stories, posts, and real followers</div>
+            </div>
+        </div>
+        <div class="auth-right">
+            <!-- Login Form -->
+            <div class="auth-card" id="loginCard">
+                <div class="auth-header">
+                    <h2>Welcome Back</h2>
+                    <p>Log in to your WorldFG account</p>
+                </div>
+                <div class="error-message" id="loginError"></div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="Email address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="auth-btn primary-btn">Log In</button>
+                </form>
+                <div class="auth-divider"><span>or</span></div>
+                <button type="button" class="auth-btn google-btn" onclick="googleLogin()">
+                    <i class="fab fa-google"></i> Continue with Google
+                </button>
+                <div class="auth-links">
+                    <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
+                </div>
+                <div class="auth-switch">
+                    <p>New to WorldFG? <a href="#" onclick="showRegister()">Create Account</a></p>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div class="auth-card" id="registerCard" style="display:none;">
+                <div class="auth-header">
+                    <h2>Join WorldFG</h2>
+                    <p>It's free and always will be</p>
+                </div>
+                <div class="error-message" id="registerError"></div>
+                <form onsubmit="handleRegister(event)">
+                    <div class="name-inputs">
+                        <div class="input-group">
+                            <input type="text" id="regFirstName" placeholder="First name" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="regLastName" placeholder="Last name" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="regEmail" placeholder="Email address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="regPassword" placeholder="Password (min 6 characters)" required minlength="6">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-calendar"></i>
+                        <input type="date" id="regBirthday" required>
+                    </div>
+                    <!-- Gender Selection (Hidden/Private like Facebook) -->
+                    <div class="input-group">
+                        <i class="fas fa-venus-mars"></i>
+                        <select id="regGender" required style="padding-left:40px;">
+                            <option value="">Select Gender</option>
+                            <option value="female">👩 Female</option>
+                            <option value="male">👨 Male</option>
+                            <option value="custom">⚧ Custom</option>
+                        </select>
+                    </div>
+                    <!-- Custom Gender (shown only when Custom is selected) -->
+                    <div class="input-group" id="customGenderGroup" style="display:none;">
+                        <i class="fas fa-transgender"></i>
+                        <input type="text" id="regCustomGender" placeholder="Enter your gender identity">
+                    </div>
+                    <!-- Pronoun Selection (Hidden/Private) -->
+                    <div class="input-group" id="pronounGroup" style="display:none;">
+                        <i class="fas fa-user-tag"></i>
+                        <select id="regPronoun">
+                            <option value="">Select Pronoun (Optional)</option>
+                            <option value="she/her">She/Her</option>
+                            <option value="he/him">He/Him</option>
+                            <option value="they/them">They/Them</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <!-- Language Selection -->
+                    <div class="input-group">
+                        <i class="fas fa-language"></i>
+                        <select id="regLanguage" style="padding-left:40px;">
+                            <option value="en">🌐 English</option>
+                            <option value="es">🌐 Español (Spanish)</option>
+                            <option value="fr">🌐 Français (French)</option>
+                            <option value="de">🌐 Deutsch (German)</option>
+                            <option value="zh">🌐 中文 (Chinese)</option>
+                            <option value="ar">🌐 العربية (Arabic)</option>
+                            <option value="pt">🌐 Português (Portuguese)</option>
+                            <option value="hi">🌐 हिन्दी (Hindi)</option>
+                            <option value="ja">🌐 日本語 (Japanese)</option>
+                            <option value="ko">🌐 한국어 (Korean)</option>
+                            <option value="ru">🌐 Русский (Russian)</option>
+                            <option value="it">🌐 Italiano (Italian)</option>
+                            <option value="nl">🌐 Nederlands (Dutch)</option>
+                            <option value="tr">🌐 Türkçe (Turkish)</option>
+                            <option value="sw">🌐 Kiswahili (Swahili)</option>
+                            <option value="yo">🌐 Yorùbá</option>
+                            <option value="ha">🌐 Hausa</option>
+                            <option value="ig">🌐 Igbo</option>
+                            <option value="zu">🌐 isiZulu</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <select id="regCountry" required>
+                            <option value="">Select Your Country</option>
+                            <option value="Nigeria">🇳🇬 Nigeria</option>
+                            <option value="Ghana">🇬🇭 Ghana</option>
+                            <option value="Kenya">🇰🇪 Kenya</option>
+                            <option value="South Africa">🇿🇦 South Africa</option>
+                            <option value="USA">🇺🇸 United States</option>
+                            <option value="UK">🇬🇧 United Kingdom</option>
+                            <option value="India">🇮🇳 India</option>
+                            <option value="Brazil">🇧🇷 Brazil</option>
+                            <option value="China">🇨🇳 China</option>
+                            <option value="Japan">🇯🇵 Japan</option>
+                            <option value="Australia">🇦🇺 Australia</option>
+                            <option value="Canada">🇨🇦 Canada</option>
+                            <option value="Germany">🇩🇪 Germany</option>
+                            <option value="France">🇫🇷 France</option>
+                            <option value="UAE">🇦🇪 UAE</option>
+                            <option value="Other">🌍 Other Country</option>
+                        </select>
+                    </div>
+                    <p style="font-size:11px; color:#64748b; margin-bottom:12px;">
+                        By clicking Create Account, you agree to our Terms and that you have read our Privacy Policy.
+                    </p>
+                    <button type="submit" class="auth-btn primary-btn">Create Account</button>
+                </form>
+                <div class="auth-switch">
+                    <p>Already have an account? <a href="#" onclick="showLogin()">Log In</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotPasswordModal" style="display:none;">
+        <div class="modal-content">
+            <h3 style="margin-bottom:12px;">Reset Your Password</h3>
+            <p style="color:#94a3b8; margin-bottom:16px; font-size:14px;">Enter your email address and we'll send you a reset link.</p>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="resetEmail" placeholder="Email address">
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button onclick="resetPassword()" class="primary-btn" style="flex:1;">Send Reset Link</button>
+                <button onclick="document.getElementById('forgotPasswordModal').style.display='none'" style="flex:1; background:var(--border); color:white; border:none; padding:12px; border-radius:8px; cursor:pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        function showRegister() {
+            document.getElementById('loginCard').style.display = 'none';
+            document.getElementById('registerCard').style.display = 'block';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        function showLogin() {
+            document.getElementById('loginCard').style.display = 'block';
+            document.getElementById('registerCard').style.display = 'none';
+            document.getElementById('registerError').style.display = 'none';
+        }
+
+        function showForgotPassword() {
+            document.getElementById('forgotPasswordModal').style.display = 'flex';
+        }
+
+        function resetPassword() {
+            const email = document.getElementById('resetEmail').value.trim();
+            if (!email) {
+                alert('Please enter your email address.');
+                return;
+            }
+            const user = DB.users.find(u => u.email === email.toLowerCase());
+            if (!user) {
+                alert('No account found with that email address.');
+                return;
+            }
+            alert('✅ Password reset link sent to ' + email + '!\n\n(Simulated - In production, this would send a real email)');
+            document.getElementById('forgotPasswordModal').style.display = 'none';
+        }
+
+        // Gender selection logic
+        document.getElementById('regGender')?.addEventListener('change', function() {
+            const customGroup = document.getElementById('customGenderGroup');
+            const pronounGroup = document.getElementById('pronounGroup');
+            
+            if (this.value === 'custom') {
+                customGroup.style.display = 'block';
+                pronounGroup.style.display = 'block';
+            } else if (this.value === 'female' || this.value === 'male') {
+                customGroup.style.display = 'none';
+                pronounGroup.style.display = 'block';
+            } else {
+                customGroup.style.display = 'none';
+                pronounGroup.style.display = 'none';
+            }
+        });
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const errorEl = document.getElementById('registerError');
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const firstName = document.getElementById('regFirstName').value.trim();
+            const lastName = document.getElementById('regLastName').value.trim();
+            const country = document.getElementById('regCountry').value;
+            const birthday = document.getElementById('regBirthday').value;
+            const gender = document.getElementById('regGender').value;
+            const customGender = document.getElementById('regCustomGender').value.trim();
+            const pronoun = document.getElementById('regPronoun').value;
+            const language = document.getElementById('regLanguage').value;
+
+            if (DB.users.find(u => u.email === email)) {
+                errorEl.textContent = 'An account with this email already exists.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const newUser = {
+                id: 'user_' + Date.now(),
+                email: email,
+                password: password,
+                firstName: firstName,
+                lastName: lastName,
+                fullName: firstName + ' ' + lastName,
+                country: country,
+                birthday: birthday,
+                gender: gender === 'custom' ? customGender : gender,
+                pronoun: pronoun || '',
+                language: language || 'en',
+                avatar: firstName.charAt(0).toUpperCase(),
+                profilePic: null,
+                coverPic: null,
+                bio: '',
+                verified: false,
+                joined: new Date().toISOString(),
+                location: country,
+                website: '',
+                work: '',
+                education: '',
+                phone: ''
+            };
+
+            DB.users.push(newUser);
+            DB.friends[newUser.id] = [];
+            DB.friendRequests[newUser.id] = [];
+            DB.followers[newUser.id] = [];
+            DB.currentUser = newUser;
+            
+            // Save language preference
+            localStorage.setItem('worldfg_language', language);
+            
+            saveDB();
+            window.location.href = 'home.html';
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const errorEl = document.getElementById('loginError');
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+
+            const user = DB.users.find(u => u.email === email && u.password === password);
+            if (!user) {
+                errorEl.textContent = 'Invalid email or password. Please try again.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            DB.currentUser = user;
+            
+            // Restore language preference
+            if (user.language) {
+                localStorage.setItem('worldfg_language', user.language);
+            }
+            
+            saveDB();
+            window.location.href = 'home.html';
+        }
+
+        function googleLogin() {
+            const demoUser = {
+                id: 'user_google_' + Date.now(),
+                email: 'demo@worldfg.com',
+                password: 'demo123',
+                firstName: 'Demo',
+                lastName: 'User',
+                fullName: 'Demo User',
+                country: 'Global',
+                birthday: '2000-01-01',
+                gender: 'male',
+                pronoun: 'he/him',
+                language: 'en',
+                avatar: 'D',
+                profilePic: null,
+                coverPic: null,
+                bio: 'WorldFG Explorer 🌍',
+                verified: true,
+                joined: new Date().toISOString(),
+                location: 'Worldwide',
+                website: '',
+                work: '',
+                education: '',
+                phone: ''
+            };
+
+            if (!DB.users.find(u => u.email === demoUser.email)) {
+                DB.users.push(demoUser);
+                DB.friends[demoUser.id] = [];
+                DB.friendRequests[demoUser.id] = [];
+                DB.followers[demoUser.id] = [];
+            }
+
+            DB.currentUser = DB.users.find(u => u.email === demoUser.email);
+            localStorage.setItem('worldfg_language', 'en');
+            saveDB();
+            window.location.href = 'home.html';
+        }
+
+        // Close modals on outside click
+        document.getElementById('forgotPasswordModal')?.addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
