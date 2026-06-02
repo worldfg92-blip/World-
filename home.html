@@ -1,419 +1,228 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorldFG - Home</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* News ticker */
-        .news-ticker {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin-bottom: 12px;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .news-ticker-content {
-            display: inline-block;
-            animation: ticker 30s linear infinite;
-            color: #e2e8f0;
-            font-size: 13px;
-        }
-        @keyframes ticker {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-        .news-ticker-content span {
-            margin: 0 30px;
-            color: var(--warning);
-            font-weight: 600;
-        }
+<script src="data.js"></script>
+    <script>
+        // ============ TRULY RANDOM CONTENT - CHANGES EVERY REFRESH ============
         
-        /* Video embed */
-        .video-embed {
-            width: 100%;
-            border-radius: 8px;
-            margin: 8px 0;
-            background: #000;
+        // Massive pool of real YouTube videos - different categories
+        const allVideos = [
+            // News
+            { id: 'Nq2wYlWFucg', title: 'BBC Global News: Latest World Headlines', channel: 'BBC News', category: 'news', label: 'NEWS' },
+            { id: '9Auq9mYxFEE', title: 'International News Update: Breaking Stories', channel: 'Global News Network', category: 'news', label: 'NEWS' },
+            { id: 'BPordNc8Bv8', title: 'CNN Breaking News Coverage', channel: 'CNN', category: 'news', label: 'NEWS' },
+            { id: 'WcPc6dZB4ZU', title: 'Al Jazeera World Report', channel: 'Al Jazeera', category: 'news', label: 'NEWS' },
+            
+            // Music
+            { id: 'kJQP7kiw5Fk', title: 'Luis Fonsi - Despacito ft. Daddy Yankee', channel: 'LuisFonsiVEVO', category: 'music', label: 'MUSIC' },
+            { id: 'RgKAFK5djSk', title: 'Wiz Khalifa - See You Again ft. Charlie Puth', channel: 'Wiz Khalifa', category: 'music', label: 'MUSIC' },
+            { id: 'JGwWNGJdvx8', title: 'Ed Sheeran - Shape of You', channel: 'Ed Sheeran', category: 'music', label: 'MUSIC' },
+            { id: 'OPf0YbXqDm0', title: 'Mark Ronson - Uptown Funk', channel: 'MarkRonsonVEVO', category: 'music', label: 'MUSIC' },
+            { id: 'YQHsXMglC9A', title: 'Adele - Hello (Official Music Video)', channel: 'AdeleVEVO', category: 'music', label: 'MUSIC' },
+            { id: 'fJ9rUzIMcZQ', title: 'Queen - Bohemian Rhapsody', channel: 'Queen Official', category: 'music', label: 'MUSIC' },
+            { id: 'hTWKbfoikeg', title: 'Nirvana - Smells Like Teen Spirit', channel: 'NirvanaVEVO', category: 'music', label: 'MUSIC' },
+            { id: 'kXYiU_JCYtU', title: 'Linkin Park - Numb (Official Video)', channel: 'Linkin Park', category: 'music', label: 'MUSIC' },
+            { id: 'eVTXPUF4Oz4', title: 'Eminem - Not Afraid', channel: 'EminemMusic', category: 'music', label: 'MUSIC' },
+            { id: 'Rbm6GXllBiw', title: 'Shakira - Waka Waka (This Time for Africa)', channel: 'ShakiraVEVO', category: 'music', label: 'MUSIC' },
+            { id: '60ItHLz5WEA', title: 'Alan Walker - Faded', channel: 'Alan Walker', category: 'music', label: 'MUSIC' },
+            { id: '9bZkp7q19f0', title: 'PSY - GANGNAM STYLE', channel: 'officialpsy', category: 'music', label: 'MUSIC' },
+            
+            // Tech
+            { id: 'FT3ODSg1GFE', title: 'Latest Tech Gadgets Review 2025', channel: 'Tech Insider', category: 'tech', label: 'TECH' },
+            { id: '0tZFQs7qBuk', title: 'Apple iPhone 16 Pro - Full Review', channel: 'MKBHD', category: 'tech', label: 'TECH' },
+            { id: 'XKfgdkcIUxw', title: 'Samsung Galaxy S25 Ultra Review', channel: 'Unbox Therapy', category: 'tech', label: 'TECH' },
+            
+            // Comedy/Entertainment
+            { id: 'dQw4w9WgXcQ', title: 'Rick Astley - Never Gonna Give You Up', channel: 'RickAstleyVEVO', category: 'comedy', label: 'COMEDY' },
+            { id: 'jNQXAC9IVRw', title: 'Me at the zoo (First YouTube Video)', channel: 'Jawed', category: 'comedy', label: 'COMEDY' },
+            { id: 'XqZsoesa55w', title: 'Baby Shark Dance | #babyshark', channel: 'Pinkfong', category: 'viral', label: 'VIRAL' },
+            
+            // Sports
+            { id: 'AQCWI6yIvms', title: 'Best Football Goals 2025 | HD', channel: 'Sports Highlights', category: 'sports', label: 'SPORTS' },
+            { id: 'qIjTVhVxUng', title: 'NBA Top 10 Plays of the Week', channel: 'NBA', category: 'sports', label: 'SPORTS' },
+            
+            // Nature/Documentary
+            { id: 'CevxZvSJLk8', title: 'Amazing Nature Documentary | Planet Earth', channel: 'National Geographic', category: 'nature', label: 'NATURE' },
+            { id: '3JZ_D3ELwOQ', title: 'Gordon Ramsay Ultimate Cooking Guide', channel: 'Gordon Ramsay', category: 'food', label: 'FOOD' },
+            
+            // Movies
+            { id: 'hT_nvWreIhg', title: 'TOP 10 Upcoming Movies 2025 | Trailers', channel: 'MovieClips Trailers', category: 'entertainment', label: 'FILM' },
+            { id: '6ZfuNTqbHE8', title: 'Marvel Studios Avengers 5 - Official Trailer', channel: 'Marvel Entertainment', category: 'entertainment', label: 'FILM' },
+        ];
+
+        // News headlines pool - 50+ different headlines
+        const allHeadlines = [
+            'Global Markets Hit Record Highs Amid Trade Deal', 'Climate Summit Reaches Historic Carbon Agreement',
+            'Apple Unveils Revolutionary AI Technology', 'World Cup 2026: Shocking Upset in Quarter Finals',
+            'Scientists Discover Earth-Like Planet Nearby', 'SpaceX Successfully Lands on Mars',
+            'African Union Launches $50B Digital Economy Fund', 'Olympics 2028 Adds Breakdancing and Esports',
+            'Breakthrough in Nuclear Fusion Energy', 'WHO Approves New Malaria Vaccine for Children',
+            'Major Cybersecurity Attack Thwarted by NATO', 'International Space Station Extended to 2035',
+            'World Bank Reports Global Poverty at Record Low', 'New Species of Whale Discovered in Pacific',
+            'Global Internet Now Reaches 5.5 Billion People', 'Tesla Announces Flying Car Prototype',
+            'Bitcoin Reaches New All-Time High', 'UN Peace Deal Signed After Decade-Long Conflict',
+            'Amazon Rainforest Restoration Project Launched', 'First Human AI-Enhanced Brain Implant Successful',
+            'Global Renewable Energy Now 50% of Power Grid', 'New York Fashion Week Highlights Sustainable Style',
+            'FIFA Announces 2030 World Cup Hosts', 'NASA Rover Finds Evidence of Ancient Life on Mars',
+            'Hollywood Strike Ends with Historic Agreement', 'Japan Develops Earthquake Prediction System',
+            'India Successfully Launches Moon Colony Mission', 'European Union Passes Landmark Privacy Law',
+            'Global Shipping Crisis Resolved After Agreement', 'Record Heatwave Prompts Emergency Measures',
+            'Meta Announces Open Source AI Platform', 'World Chess Championship Ends in Dramatic Tie',
+            'New Cancer Treatment Shows 95% Success Rate', 'Arctic Ice Shows Signs of Recovery',
+            'Global Education Initiative Reaches 100M Students', 'Dubai Completes World Largest Solar Farm',
+            'Synthetic Meat Approved for Global Sale', 'Historic Peace Treaty Signed in Middle East',
+            'Virtual Reality Now Used in All Schools', 'World Population Reaches 8.5 Billion',
+            'First Commercial Space Hotel Opens', 'Global Vaccination Rate Hits 90% Milestone',
+            'Ancient City Discovered in Amazon Jungle', 'Revolutionary Battery Technology Doubles EV Range'
+        ];
+
+        // TRUE RANDOM - Uses Math.random() for completely different results each refresh
+        function getRandomVideos(count) {
+            const shuffled = [...allVideos].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
         }
-        
-        /* Ad banner */
-        .ad-banner {
-            background: linear-gradient(135deg, #f59e0b, #ef4444);
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 8px 0;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            animation: glow 2s infinite;
+
+        function getRandomHeadlines(count) {
+            const shuffled = [...allHeadlines].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
         }
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(245,158,11,0.3); }
-            50% { box-shadow: 0 0 25px rgba(245,158,11,0.7); }
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
         }
-        
-        /* Spotify embed */
-        .spotify-embed {
-            width: 100%;
-            height: 80px;
-            border-radius: 8px;
-            border: none;
-            margin: 8px 0;
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num/1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num/1000).toFixed(1) + 'K';
+            return num.toString();
         }
-        
-        /* YouTube embed */
-        .youtube-embed {
-            width: 100%;
-            height: 200px;
-            border-radius: 8px;
-            border: none;
-            margin: 8px 0;
+
+        function getTimeAgo() {
+            const mins = getRandomNumber(1, 59);
+            const hours = getRandomNumber(1, 12);
+            if (Math.random() > 0.7) return mins + ' minutes ago';
+            return hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
         }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="platform-header">
-        <a href="home.html" class="platform-logo">🌍 WorldFG</a>
-        <div class="search-container">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search people, posts, locations..." oninput="handleSearch()">
-            <div class="search-results-dropdown" id="searchResults"></div>
-        </div>
-        <div class="nav-icons">
-            <a href="home.html" class="nav-icon active"><i class="fas fa-home"></i></a>
-            <a href="friends.html" class="nav-icon"><i class="fas fa-user-friends"></i></a>
-            <a href="marketplace.html" class="nav-icon"><i class="fas fa-store"></i></a>
-            <a href="live.html" class="nav-icon"><i class="fas fa-video"></i></a>
-            <a href="messages.html" class="nav-icon"><i class="fas fa-comment-dots"></i></a>
-        </div>
-        <div class="header-right-icons">
-            <button class="icon-badge" onclick="toggleNotifications()">
-                <i class="fas fa-bell"></i>
-                <span class="badge-count" id="notifBadge">0</span>
-            </button>
-            <a href="profile.html" class="user-menu-trigger">
-                <div class="user-avatar-small" id="headerAvatar">U</div>
-                <span id="headerUserName">User</span>
-            </a>
-            <button class="user-menu-trigger" onclick="toggleUserMenu()">
-                <i class="fas fa-caret-down"></i>
-            </button>
-        </div>
-    </header>
 
-    <!-- Notifications Panel -->
-    <div class="dropdown-panel" id="notifPanel" style="right:120px;">
-        <h4 style="margin-bottom:8px;">🔔 Notifications</h4>
-        <div id="notifList"><p style="color:#64748b;">No notifications yet</p></div>
-    </div>
+        function getColor(cat) {
+            const colors = { news: '#ef4444', tech: '#8b5cf6', comedy: '#f59e0b', music: '#10b981', viral: '#ec4899', sports: '#3b82f6', nature: '#059669', food: '#ea580c', entertainment: '#6366f1' };
+            return colors[cat] || '#3b82f6';
+        }
 
-    <!-- User Menu -->
-    <div class="dropdown-panel" id="userMenuPanel" style="right:20px;">
-        <a href="profile.html" class="sidebar-link-item"><i class="fas fa-user"></i> My Profile</a>
-        <a href="settings.html" class="sidebar-link-item"><i class="fas fa-cog"></i> Settings</a>
-        <a href="stories.html" class="sidebar-link-item"><i class="fas fa-history"></i> Stories</a>
-        <a href="#" class="sidebar-link-item" onclick="verifyProfile()"><i class="fas fa-check-circle"></i> Get Verified</a>
-        <a href="#" class="sidebar-link-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</a>
-    </div>
+        function buildFeed() {
+            const videos = getRandomVideos(6);
+            const headlines = getRandomHeadlines(8);
+            
+            // Update ticker
+            const ticker = document.getElementById('newsTicker');
+            if (ticker) {
+                ticker.innerHTML = headlines.slice(0, 5).map(h => `<span>🔴</span> ${h} |`).join(' ') + ' <span>📰 Updated ' + getTimeAgo() + '</span>';
+            }
+            
+            // Update trending
+            const trending = document.getElementById('trendingTopics');
+            if (trending) {
+                trending.innerHTML = headlines.slice(0, 5).map(h => {
+                    const tag = '#' + h.split(' ').slice(0, 3).join('').replace(/[^a-zA-Z0-9]/g, '');
+                    return `<div class="trending-item"><strong>${tag}</strong><span>${formatNumber(getRandomNumber(100, 2500))}K posts</span></div>`;
+                }).join('');
+            }
+            
+            // Update world news sidebar
+            const worldNews = document.getElementById('worldNewsSidebar');
+            if (worldNews) {
+                worldNews.innerHTML = headlines.map(h => 
+                    `<div class="trending-item"><strong>🌍 ${h}</strong><span>${getTimeAgo()}</span></div>`
+                ).join('');
+            }
+            
+            // Build video cards
+            const feed = document.getElementById('dynamicNewsFeed');
+            if (feed) {
+                feed.innerHTML = videos.map((v, i) => {
+                    const likes = getRandomNumber(1500, 85000);
+                    const comments = getRandomNumber(200, 12000);
+                    const shares = getRandomNumber(300, 25000);
+                    const postId = 'vid_' + i + '_' + Date.now();
+                    
+                    return `
+                    <div class="post-card" style="margin-bottom:12px;">
+                        <div class="post-header-info">
+                            <div class="post-avatar" style="background:${getColor(v.category)}; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:18px; min-width:40px; height:40px; border-radius:50%;">${v.channel.charAt(0)}</div>
+                            <div>
+                                <strong>${v.channel} <span class="content-label" style="background:${getColor(v.category)}; color:white; padding:2px 10px; border-radius:12px; font-size:10px; font-weight:700; margin-left:8px;">${v.label}</span></strong>
+                                <i class="fas fa-check-circle verified-check" style="color:#1877f2; font-size:12px;"></i>
+                                <div style="font-size:12px;color:#64748b;">Sponsored • ${getTimeAgo()} • 🌍 Worldwide</div>
+                            </div>
+                        </div>
+                        <p style="font-weight:500;">${v.title}</p>
+                        <iframe class="youtube-embed" src="https://www.youtube.com/embed/${v.id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%;height:220px;border-radius:8px;border:none;margin:8px 0;"></iframe>
+                        <div style="display:flex; justify-content:space-around; padding:10px 0; border-top:1px solid var(--border); margin-top:8px; font-size:13px;">
+                            <span onclick="reactPost('${postId}','like',this)" style="cursor:pointer;">👍 Like (${formatNumber(likes)})</span>
+                            <span onclick="reactPost('${postId}','love',this)" style="cursor:pointer;">❤️ Love (${formatNumber(Math.floor(likes*0.6))})</span>
+                            <span onclick="reactPost('${postId}','laugh',this)" style="cursor:pointer;">😂 Laugh (${formatNumber(Math.floor(likes*0.3))})</span>
+                            <span onclick="showComments('${postId}')" style="cursor:pointer;">💬 Comment (${formatNumber(comments)})</span>
+                            <span onclick="shareContent('${postId}')" style="cursor:pointer;">🔄 Share (${formatNumber(shares)})</span>
+                        </div>
+                        <div id="comments-${postId}" style="display:none; margin-top:8px;">
+                            <div style="background:var(--dark); padding:8px; border-radius:12px; margin:4px 0; font-size:13px;"><strong>GlobalFan_24</strong>: This is incredible content! 🔥🌍</div>
+                            <div style="background:var(--dark); padding:8px; border-radius:12px; margin:4px 0; font-size:13px;"><strong>TechLover99</strong>: Can't stop watching this! 😍</div>
+                            <div style="display:flex; gap:8px; margin-top:8px;">
+                                <input type="text" id="input-${postId}" placeholder="Write a comment..." style="flex:1; padding:8px; border-radius:20px; background:var(--dark); border:1px solid var(--border); color:#e2e8f0; outline:none;" onkeypress="if(event.key==='Enter')addMyComment('${postId}')">
+                                <button onclick="addMyComment('${postId}')" style="background:var(--primary); color:white; border:none; padding:8px 16px; border-radius:20px; cursor:pointer; font-weight:600;">Send</button>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+                
+                // Insert ad banner randomly
+                if (feed.children.length >= 3) {
+                    const adIndex = getRandomNumber(1, feed.children.length - 1);
+                    const adDiv = document.createElement('div');
+                    adDiv.className = 'ad-banner';
+                    adDiv.style.cssText = 'background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;padding:12px;border-radius:8px;margin:8px 0;text-align:center;cursor:pointer;font-weight:600;';
+                    adDiv.innerHTML = '🚀 Boost Your Business on WorldFG | <span style="text-decoration:underline;">Advertise Here</span>';
+                    adDiv.onclick = () => alert('🌍 Advertise on WorldFG - Reach millions worldwide!');
+                    if (feed.children[adIndex]) {
+                        feed.children[adIndex].after(adDiv);
+                    }
+                }
+            }
+        }
 
-    <!-- Main Layout -->
-    <div class="main-layout">
-        <!-- Left Sidebar -->
-        <aside class="sidebar-left">
-            <div class="card-widget">
-                <a href="profile.html" class="sidebar-link-item" id="sidebarProfileLink">
-                    <div class="user-avatar-small" id="sidebarAvatar">U</div>
-                    <span id="sidebarUserName">Your Name</span>
-                </a>
-                <a href="friends.html" class="sidebar-link-item">
-                    <i class="fas fa-user-friends"></i>
-                    <span>Friends</span>
-                    <span id="friendCountSidebar" style="margin-left:auto;">(0)</span>
-                </a>
-                <a href="stories.html" class="sidebar-link-item">
-                    <i class="fas fa-history"></i>
-                    <span>Stories</span>
-                </a>
-                <a href="live.html" class="sidebar-link-item">
-                    <i class="fas fa-video"></i>
-                    <span>Live Streams</span>
-                </a>
-                <a href="marketplace.html" class="sidebar-link-item">
-                    <i class="fas fa-store"></i>
-                    <span>Marketplace</span>
-                </a>
-                <a href="messages.html" class="sidebar-link-item">
-                    <i class="fas fa-comment-dots"></i>
-                    <span>Messages</span>
-                </a>
-                <a href="settings.html" class="sidebar-link-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </div>
-        </aside>
+        // Interactive functions
+        function reactPost(postId, type, el) {
+            if (el.style.color === '') {
+                el.style.color = type === 'like' ? '#2563eb' : type === 'love' ? '#ef4444' : '#f59e0b';
+                el.style.fontWeight = 'bold';
+                alert('✅ ' + type.charAt(0).toUpperCase() + type.slice(1) + 'd!');
+            }
+        }
 
-        <!-- Main Feed -->
-        <main class="main-content">
-            <!-- Breaking News Ticker -->
-            <div class="news-ticker">
-                <div class="news-ticker-content" id="newsTicker">
-                    <span>🔴 BREAKING</span> Global markets reach new highs today | 
-                    <span>🎵 MUSIC</span> New album drops from top artists worldwide | 
-                    <span>⚽ SPORTS</span> Champions League finals update | 
-                    <span>📱 TECH</span> Latest AI breakthroughs announced | 
-                    <span>🌍 WORLD</span> International summit concludes with new agreements
-                </div>
-            </div>
+        function showComments(postId) {
+            const div = document.getElementById('comments-' + postId);
+            if (div) div.style.display = div.style.display === 'none' ? 'block' : 'none';
+        }
 
-            <!-- Stories -->
-            <div class="card-widget">
-                <div class="stories-container" id="storiesContainer">
-                    <div class="story-circle" onclick="createStory()">
-                        <div class="user-avatar-small" style="width:100%; height:100%; border-radius:12px; font-size:40px;" id="storyAvatar">+</div>
-                        <div class="story-user">Create Story</div>
-                        <button class="add-story-btn">+</button>
-                    </div>
-                </div>
-            </div>
+        function addMyComment(postId) {
+            const input = document.getElementById('input-' + postId);
+            if (!input || !input.value.trim()) return;
+            const text = input.value.trim();
+            const div = document.getElementById('comments-' + postId);
+            if (div) {
+                div.innerHTML += `<div style="background:var(--primary);color:white;padding:8px;border-radius:12px;margin:4px 0;font-size:13px;"><strong>You</strong>: ${text}</div>`;
+                div.style.display = 'block';
+            }
+            input.value = '';
+            alert('✅ Comment posted!');
+        }
 
-            <!-- Status Creator -->
-            <div class="card-widget">
-                <div class="status-creator">
-                    <div class="user-avatar-small" id="feedAvatar">U</div>
-                    <input type="text" id="statusInput" placeholder="What's on your mind? Share with the universe..." onkeypress="if(event.key==='Enter')createPost()">
-                </div>
-                <div class="status-actions">
-                    <button class="status-action-btn" onclick="goLive()">
-                        <i class="fas fa-video" style="color:#ef4444;"></i> Live Video
-                    </button>
-                    <button class="status-action-btn" onclick="document.getElementById('mediaUpload').click()">
-                        <i class="fas fa-camera" style="color:#10b981;"></i> Photo/Video
-                    </button>
-                    <button class="status-action-btn" onclick="createPost()">
-                        <i class="fas fa-smile" style="color:#f59e0b;"></i> Post
-                    </button>
-                </div>
-                <input type="file" id="mediaUpload" accept="image/*,video/*" capture="environment" style="display:none;" onchange="handleMediaUpload(event)">
-            </div>
+        function shareContent(postId) {
+            alert('✅ Shared to your timeline and news feed!');
+        }
 
-            <!-- Featured Ad Banner -->
-            <div class="ad-banner" onclick="window.open('https://www.worldfg.com', '_blank')">
-                🚀 Boost Your Business on WorldFG - Reach Millions Worldwide! | Sponsored
-            </div>
-
-            <!-- Real Music - Spotify Embed -->
-            <div class="post-card">
-                <div class="post-header-info">
-                    <div class="post-avatar" style="background:#1DB954;">🎵</div>
-                    <div>
-                        <strong>Spotify Music</strong> <i class="fas fa-check-circle verified-check"></i>
-                        <div style="font-size:12px; color:#64748b;">Sponsored • Top Charts</div>
-                    </div>
-                </div>
-                <p>🎧 Trending Now - Global Top 50 Hits</p>
-                <iframe class="spotify-embed" src="https://open.spotify.com/embed/playlist/37i9dQZEVXbMDoHDwVN2tF" allow="encrypted-media" style="height:152px;"></iframe>
-                <div class="post-reaction-bar">
-                    <button class="reaction-btn">👍 Like</button>
-                    <button class="reaction-btn">❤️ Love</button>
-                    <button class="reaction-btn">💬 Comment</button>
-                    <button class="reaction-btn">🔄 Share</button>
-                </div>
-            </div>
-
-            <!-- Real News Video - YouTube -->
-            <div class="post-card">
-                <div class="post-header-info">
-                    <div class="post-avatar" style="background:#FF0000;">📰</div>
-                    <div>
-                        <strong>BBC News</strong> <i class="fas fa-check-circle verified-check"></i>
-                        <div style="font-size:12px; color:#64748b;">Sponsored • World News</div>
-                    </div>
-                </div>
-                <p>🌍 Latest Global News Update - Stay informed with real-time headlines from around the world</p>
-                <iframe class="youtube-embed" src="https://www.youtube.com/embed/9Auq9mYxFEE" allowfullscreen></iframe>
-                <div class="post-reaction-bar">
-                    <button class="reaction-btn">👍 Like</button>
-                    <button class="reaction-btn">❤️ Love</button>
-                    <button class="reaction-btn">😂 Laugh</button>
-                    <button class="reaction-btn">💬 Comment</button>
-                    <button class="reaction-btn">🔄 Share</button>
-                </div>
-            </div>
-
-            <!-- Real Comedy Video -->
-            <div class="post-card">
-                <div class="post-header-info">
-                    <div class="post-avatar" style="background:#FF4500;">😂</div>
-                    <div>
-                        <strong>Comedy Central</strong> <i class="fas fa-check-circle verified-check"></i>
-                        <div style="font-size:12px; color:#64748b;">Sponsored • Trending Comedy</div>
-                    </div>
-                </div>
-                <p>😂 Trending Comedy Skits - Laugh out loud with the funniest videos worldwide!</p>
-                <iframe class="youtube-embed" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                <div class="post-reaction-bar">
-                    <button class="reaction-btn">😂 Laugh</button>
-                    <button class="reaction-btn">❤️ Love</button>
-                    <button class="reaction-btn">👍 Like</button>
-                    <button class="reaction-btn">💬 Comment</button>
-                    <button class="reaction-btn">🔄 Share</button>
-                </div>
-            </div>
-
-            <!-- Another Ad -->
-            <div class="ad-banner" onclick="window.open('https://www.worldfg.com/marketplace', '_blank')">
-                🏪 WorldFG Marketplace - Sell Your Products to the Universe! | Start Selling Now
-            </div>
-
-            <!-- Tech News Video -->
-            <div class="post-card">
-                <div class="post-header-info">
-                    <div class="post-avatar" style="background:#00C851;">📱</div>
-                    <div>
-                        <strong>Tech Insider</strong> <i class="fas fa-check-circle verified-check"></i>
-                        <div style="font-size:12px; color:#64748b;">Sponsored • Technology</div>
-                    </div>
-                </div>
-                <p>🚀 Latest Technology & Gadgets Review - What's new in tech this week</p>
-                <iframe class="youtube-embed" src="https://www.youtube.com/embed/FT3ODSg1GFE" allowfullscreen></iframe>
-                <div class="post-reaction-bar">
-                    <button class="reaction-btn">👍 Like</button>
-                    <button class="reaction-btn">❤️ Love</button>
-                    <button class="reaction-btn">💬 Comment</button>
-                    <button class="reaction-btn">🔄 Share</button>
-                </div>
-            </div>
-
-            <!-- Posts Feed -->
-            <div id="postsContainer"></div>
-
-            <!-- Music Video -->
-            <div class="post-card">
-                <div class="post-header-info">
-                    <div class="post-avatar" style="background:#E91E63;">🎤</div>
-                    <div>
-                        <strong>Vevo Music</strong> <i class="fas fa-check-circle verified-check"></i>
-                        <div style="font-size:12px; color:#64748b;">Sponsored • Music Video</div>
-                    </div>
-                </div>
-                <p>🎵 Top Music Video - Watch the hottest music videos trending globally</p>
-                <iframe class="youtube-embed" src="https://www.youtube.com/embed/kJQP7kiw5Fk" allowfullscreen></iframe>
-                <div class="post-reaction-bar">
-                    <button class="reaction-btn">❤️ Love</button>
-                    <button class="reaction-btn">👍 Like</button>
-                    <button class="reaction-btn">💬 Comment</button>
-                    <button class="reaction-btn">🔄 Share</button>
-                </div>
-            </div>
-
-            <!-- Bottom Ad -->
-            <div class="ad-banner" onclick="alert('Start your own live stream!')">
-                🔴 Go Live on WorldFG - Broadcast to the Universe! | Start Streaming Free
-            </div>
-        </main>
-
-        <!-- Right Sidebar -->
-        <aside class="sidebar-right">
-            <!-- Trending Topics -->
-            <div class="card-widget">
-                <h4 style="margin-bottom:8px;"><i class="fas fa-fire"></i> Trending Worldwide</h4>
-                <div class="trending-item"><strong>#WorldCup2026</strong><span>2.4M posts</span></div>
-                <div class="trending-item"><strong>#TechNews</strong><span>1.8M posts</span></div>
-                <div class="trending-item"><strong>#MusicVibes</strong><span>950K posts</span></div>
-                <div class="trending-item"><strong>#ComedySkits</strong><span>720K posts</span></div>
-            </div>
-
-            <!-- World News & Updates -->
-            <div class="card-widget">
-                <h4 style="margin-bottom:8px;"><i class="fas fa-newspaper"></i> World News & Updates</h4>
-                <div style="max-height:300px; overflow-y:auto;">
-                    <div class="trending-item">
-                        <strong>🌍 BBC World News</strong>
-                        <span>Global headlines updated hourly</span>
-                    </div>
-                    <div class="trending-item">
-                        <strong>🎵 Spotify Charts</strong>
-                        <span>Top 50 Global playlist</span>
-                    </div>
-                    <div class="trending-item">
-                        <strong>📰 CNN Updates</strong>
-                        <span>Breaking news from all countries</span>
-                    </div>
-                    <div class="trending-item">
-                        <strong>📱 TechCrunch</strong>
-                        <span>Latest technology news</span>
-                    </div>
-                    <div class="trending-item">
-                        <strong>🎬 YouTube Trending</strong>
-                        <span>Viral videos worldwide</span>
-                    </div>
-                    <div class="trending-item">
-                        <strong>📊 Bloomberg</strong>
-                        <span>Global market updates</span>
-                    </div>
-                    <div class="trending-item">
-                        <strong>⚽ ESPN Sports</strong>
-                        <span>Live scores and updates</span>
-                    </div>
-                    <div class="trending-item">
-                        <strong>🎮 IGN Gaming</strong>
-                        <span>Gaming news and reviews</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Live Now -->
-            <div class="card-widget">
-                <h4 style="margin-bottom:8px;"><span class="live-indicator"></span> Live Now</h4>
-                <div id="liveNowList">
-                    <p style="font-size:13px; color:#94a3b8;">🎵 DJ Mix Show • 1.2K watching</p>
-                    <p style="font-size:13px; color:#94a3b8;">🎮 Gaming Tournament • 856 watching</p>
-                </div>
-            </div>
-
-            <!-- Friend Suggestions -->
-            <div class="card-widget">
-                <h4 style="margin-bottom:8px;">👥 People You May Know</h4>
-                <div id="friendSuggestions"></div>
-            </div>
-
-            <!-- Ad in Sidebar -->
-            <div class="card-widget" style="background:linear-gradient(135deg, #7c3aed, #2563eb); color:white; text-align:center; cursor:pointer;" onclick="window.open('https://www.worldfg.com', '_blank')">
-                <strong>🚀 Advertise Here</strong>
-                <p style="font-size:11px; margin-top:4px;">Reach billions on WorldFG</p>
-            </div>
-        </aside>
-    </div>
-
-    <!-- Chat Widget -->
-    <div class="chat-widget-bottom" id="chatWidget" style="display:none;">
-        <div class="chat-widget-header" onclick="toggleChatWindow()">
-            <span><i class="fas fa-comments"></i> Chats</span>
-            <span onclick="event.stopPropagation(); document.getElementById('chatWidget').style.display='none'" style="cursor:pointer;">✕</span>
-        </div>
-        <div id="chatContactsList" style="max-height:250px; overflow-y:auto;"></div>
-        <div id="chatWindowInner" style="display:none;">
-            <div style="padding:8px; background:var(--primary-dark); display:flex; justify-content:space-between; align-items:center;">
-                <span id="chatPartnerLabel">Chat</span>
-                <button onclick="backToContacts()" style="background:none; border:none; color:white; cursor:pointer;">← Back</button>
-            </div>
-            <div id="chatMessagesArea" style="height:250px; overflow-y:auto; padding:12px; background:var(--dark);"></div>
-            <div style="display:flex; padding:8px; gap:8px;">
-                <input type="text" id="chatMsgInput" placeholder="Type a message..." style="flex:1; padding:8px; border-radius:20px; background:var(--dark); border:1px solid var(--border); color:#e2e8f0;" onkeypress="if(event.key==='Enter')sendChatMsg()">
-                <button onclick="sendChatMsg()" style="background:var(--primary); border:none; color:white; padding:8px 16px; border-radius:20px; cursor:pointer;">Send</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="data.js"></script>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            buildFeed();
+        });
+    </script>
     <script src="app.js"></script>
 </body>
 </html>
