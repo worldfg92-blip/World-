@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldFG - Friends</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="platform-header">
+        <a href="home.html" class="platform-logo">🌍 WorldFG</a>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search people..." oninput="handleSearch()">
+            <div class="search-results-dropdown" id="searchResults"></div>
+        </div>
+        <div class="nav-icons">
+            <a href="home.html" class="nav-icon"><i class="fas fa-home"></i></a>
+            <a href="friends.html" class="nav-icon active"><i class="fas fa-user-friends"></i></a>
+            <a href="marketplace.html" class="nav-icon"><i class="fas fa-store"></i></a>
+            <a href="live.html" class="nav-icon"><i class="fas fa-video"></i></a>
+            <a href="messages.html" class="nav-icon"><i class="fas fa-comment-dots"></i></a>
+        </div>
+        <div class="header-right-icons">
+            <a href="profile.html" class="user-menu-trigger">
+                <div class="user-avatar-small" id="headerAvatar">U</div>
+                <span id="headerUserName">User</span>
+            </a>
+        </div>
+    </header>
+
+    <div style="max-width:1000px; margin:16px auto; padding:0 16px;">
+        <h1 style="margin-bottom:16px;">👥 Friends</h1>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('friends')">All Friends</button>
+            <button class="tab-btn" onclick="showTab('requests')">Friend Requests</button>
+            <button class="tab-btn" onclick="showTab('suggestions')">Suggestions</button>
+        </div>
+        
+        <div id="friendsTab">
+            <div class="friends-grid" id="friendsContainer"></div>
+        </div>
+        
+        <div id="requestsTab" style="display:none;">
+            <div class="friends-grid" id="requestsContainer"></div>
+        </div>
+        
+        <div id="suggestionsTab" style="display:none;">
+            <div class="friends-grid" id="suggestionsContainer"></div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+        function showTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('friendsTab').style.display = tab === 'friends' ? 'block' : 'none';
+            document.getElementById('requestsTab').style.display = tab === 'requests' ? 'block' : 'none';
+            document.getElementById('suggestionsTab').style.display = tab === 'suggestions' ? 'block' : 'none';
+            
+            if (tab === 'friends') renderFriendsTab();
+            if (tab === 'requests') renderRequestsTab();
+            if (tab === 'suggestions') renderSuggestionsTab();
+        }
+        
+        function renderFriendsTab() {
+            const currentUser = getCurrentUser();
+            const friendIds = DB.friends[currentUser.id] || [];
+            const friends = DB.users.filter(u => friendIds.includes(u.id));
+            
+            const container = document.getElementById('friendsContainer');
+            container.innerHTML = friends.map(f => `
+                <div class="friend-card">
+                    <div class="friend-avatar" onclick="viewProfile('${f.id}')" style="cursor:pointer;">
+                        ${f.profilePic ? `<img src="${f.profilePic}" style="width:100%;height:100%;object-fit:cover;">` : f.avatar}
+                    </div>
+                    <strong>${f.fullName}</strong> ${f.verified ? '<i class="fas fa-check-circle verified-check"></i>' : ''}
+                    <div style="font-size:12px; color:#64748b;">${f.location || f.country}</div>
+                    <button onclick="removeFriend('${f.id}')" style="background:var(--danger); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-top:8px;">Remove</button>
+                </div>
+            `).join('') || '<p>No friends yet. Search and add friends!</p>';
+        }
+        
+        function renderRequestsTab() {
+            const currentUser = getCurrentUser();
+            const requests = DB.friendRequests[currentUser.id] || [];
+            const users = DB.users.filter(u => requests.includes(u.id));
+            
+            const container = document.getElementById('requestsContainer');
+            container.innerHTML = users.map(u => `
+                <div class="friend-card">
+                    <div class="friend-avatar">
+                        ${u.profilePic ? `<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;">` : u.avatar}
+                    </div>
+                    <strong>${u.fullName}</strong>
+                    <div style="display:flex; gap:6px; justify-content:center; margin-top:8px;">
+                        <button onclick="acceptRequest('${u.id}')" style="background:var(--success); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">Accept</button>
+                        <button onclick="rejectRequest('${u.id}')" style="background:var(--danger); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">Reject</button>
+                    </div>
+                </div>
+            `).join('') || '<p>No pending friend requests</p>';
+        }
+        
+        function renderSuggestionsTab() {
+            const currentUser = getCurrentUser();
+            const friendIds = DB.friends[currentUser.id] || [];
+            const suggestions = DB.users.filter(u => u.id !== currentUser.id && !friendIds.includes(u.id));
+            
+            const container = document.getElementById('suggestionsContainer');
+            container.innerHTML = suggestions.map(u => `
+                <div class="friend-card">
+                    <div class="friend-avatar">
+                        ${u.profilePic ? `<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;">` : u.avatar}
+                    </div>
+                    <strong>${u.fullName}</strong>
+                    <div style="font-size:12px; color:#64748b;">${u.location || u.country}</div>
+                    <button onclick="sendFriendRequest('${u.id}')" style="background:var(--primary); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-top:8px;">Add Friend</button>
+                </div>
+            `).join('') || '<p>No suggestions available</p>';
+        }
+        
+        function acceptRequest(userId) {
+            const currentUser = getCurrentUser();
+            if (!DB.friends[currentUser.id]) DB.friends[currentUser.id] = [];
+            if (!DB.friends[userId]) DB.friends[userId] = [];
+            
+            DB.friends[currentUser.id].push(userId);
+            DB.friends[userId].push(currentUser.id);
+            DB.friendRequests[currentUser.id] = (DB.friendRequests[currentUser.id] || []).filter(id => id !== userId);
+            
+            saveDB();
+            renderRequestsTab();
+            addNotification('👥 Friend', 'Friend request accepted!');
+            alert('✅ Friend request accepted!');
+        }
+        
+        function rejectRequest(userId) {
+            DB.friendRequests[getCurrentUser().id] = (DB.friendRequests[getCurrentUser().id] || []).filter(id => id !== userId);
+            saveDB();
+            renderRequestsTab();
+        }
+        
+        // Initial render
+        renderFriendsTab();
+        initPage();
+    </script>
+</body>
+</html>

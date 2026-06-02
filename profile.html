@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldFG - Profile</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Facebook-style profile specific styles */
+        .fb-profile-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+        
+        .fb-cover-wrapper {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            border-radius: 0 0 8px 8px;
+            overflow: visible;
+            margin-bottom: 0;
+        }
+        
+        .fb-cover-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0 0 8px 8px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        }
+        
+        .fb-cover-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.5));
+        }
+        
+        .fb-cover-btn {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            z-index: 5;
+        }
+        
+        .fb-cover-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        
+        .fb-profile-info-bar {
+            display: flex;
+            align-items: flex-end;
+            padding: 0 32px;
+            margin-top: -80px;
+            position: relative;
+            z-index: 10;
+            gap: 16px;
+        }
+        
+        .fb-profile-pic-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .fb-profile-pic {
+            width: 168px;
+            height: 168px;
+            border-radius: 50%;
+            border: 4px solid var(--card);
+            background: var(--gradient);
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .fb-profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .fb-profile-pic-initial {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .fb-change-pic-btn {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.6);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        
+        .fb-change-pic-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+        
+        .fb-profile-name-section {
+            flex: 1;
+            padding-bottom: 12px;
+        }
+        
+        .fb-profile-name {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .fb-profile-subtitle {
+            font-size: 15px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        
+        .fb-profile-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        
+        .fb-profile-stats span {
+            cursor: pointer;
+        }
+        
+        .fb-profile-stats strong {
+            color: white;
+        }
+        
+        .fb-profile-actions {
+            display: flex;
+            gap: 8px;
+            padding-bottom: 12px;
+            flex-shrink: 0;
+        }
+        
+        .fb-action-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .fb-action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .fb-action-btn.secondary {
+            background: var(--hover);
+            color: white;
+            border: 1px solid var(--border);
+        }
+        
+        .fb-action-btn.success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .fb-profile-nav {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+            margin-top: 16px;
+            overflow-x: auto;
+        }
+        
+        .fb-nav-tab {
+            padding: 16px 20px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 3px solid transparent;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        
+        .fb-nav-tab:hover {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .fb-nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .fb-profile-content {
+            display: flex;
+            gap: 16px;
+            padding: 16px 32px;
+        }
+        
+        .fb-profile-left-col {
+            width: 380px;
+            flex-shrink: 0;
+        }
+        
+        .fb-profile-right-col {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .fb-info-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .fb-info-card h3 {
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .fb-info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        
+        .fb-info-item i {
+            width: 20px;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .fb-photos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+        
+        .fb-photos-grid img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .fb-friends-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .fb-friend-mini {
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .fb-friend-mini-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background: var(--gradient);
+            margin: 0 auto 4px;
+            overflow: hidden;
+        }
+        
+        .fb-friend-mini-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .fb-friend-mini span {
+            font-size: 12px;
+            display: block;
+        }
+        
+        @media (max-width: 900px) {
+            .fb-profile-content {
+                flex-direction: column;
+                padding: 16px;
+            }
+            .fb-profile-left-col {
+                width: 100%;
+            }
+            .fb-profile-info-bar {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                margin-top: -60px;
+                padding: 0 16px;
+            }
+            .fb-profile-pic {
+                width: 130px;
+                height: 130px;
+            }
+            .fb-profile-actions {
+                justify-content: center;
+            }
+            .fb-cover-wrapper {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="platform-header">
+        <a href="home.html" class="platform-logo">🌍 WorldFG</a>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search people, posts, locations..." oninput="handleSearch()">
+            <div class="search-results-dropdown" id="searchResults"></div>
+        </div>
+        <div class="nav-icons">
+            <a href="home.html" class="nav-icon"><i class="fas fa-home"></i></a>
+            <a href="friends.html" class="nav-icon"><i class="fas fa-user-friends"></i></a>
+            <a href="marketplace.html" class="nav-icon"><i class="fas fa-store"></i></a>
+            <a href="live.html" class="nav-icon"><i class="fas fa-video"></i></a>
+            <a href="messages.html" class="nav-icon"><i class="fas fa-comment-dots"></i></a>
+        </div>
+        <div class="header-right-icons">
+            <button class="icon-badge" onclick="toggleNotifications()">
+                <i class="fas fa-bell"></i>
+                <span class="badge-count" id="notifBadge">0</span>
+            </button>
+            <a href="profile.html" class="user-menu-trigger">
+                <div class="user-avatar-small" id="headerAvatar">U</div>
+                <span id="headerUserName">User</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Full-Width Notifications Panel (like messages layout) -->
+    <div id="notifOverlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:2000; display:none; justify-content:center; align-items:center;">
+        <div style="background:var(--card); border-radius:12px; width:90%; max-width:550px; max-height:80vh; overflow:hidden; border:1px solid var(--border);">
+            <div style="padding:16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0;">🔔 Notifications</h3>
+                <button onclick="document.getElementById('notifOverlay').style.display='none'" style="background:none; border:none; color:white; cursor:pointer; font-size:20px;">✕</button>
+            </div>
+            <div style="max-height:60vh; overflow-y:auto; padding:8px;" id="notifFullList"></div>
+            <div style="padding:12px; border-top:1px solid var(--border);">
+                <button onclick="clearAllNotifications()" style="background:var(--danger); color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; width:100%;">Clear All Notifications</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="fb-profile-container">
+        <!-- Cover Photo -->
+        <div class="fb-cover-wrapper">
+            <img class="fb-cover-photo" id="coverImage" src="" alt="Cover Photo" style="display:none;">
+            <div id="coverPlaceholder" class="fb-cover-photo" style="display:flex; align-items:center; justify-content:center; font-size:80px; color:rgba(255,255,255,0.3);">🌍</div>
+            <div class="fb-cover-gradient"></div>
+            <button class="fb-cover-btn" onclick="document.getElementById('coverUpload').click()">
+                <i class="fas fa-camera"></i> Change Cover Photo
+            </button>
+            <input type="file" id="coverUpload" accept="image/*" style="display:none;" onchange="updateCover(event)">
+        </div>
+
+        <!-- Profile Info Bar -->
+        <div class="fb-profile-info-bar">
+            <div class="fb-profile-pic-wrapper">
+                <div class="fb-profile-pic">
+                    <img id="profileImage" src="" alt="Profile" style="display:none;">
+                    <div class="fb-profile-pic-initial" id="profileInitial">U</div>
+                </div>
+                <button class="fb-change-pic-btn" onclick="document.getElementById('profilePicUpload').click()">
+                    <i class="fas fa-camera"></i>
+                </button>
+                <input type="file" id="profilePicUpload" accept="image/*" style="display:none;" onchange="updateProfilePic(event)">
+            </div>
+            
+            <div class="fb-profile-name-section">
+                <h1 class="fb-profile-name">
+                    <span id="profileName">User Name</span>
+                    <span id="verifiedBadge" style="display:none;"><i class="fas fa-check-circle" style="color:#1877f2; font-size:22px;"></i></span>
+                </h1>
+                <div class="fb-profile-subtitle" id="profileBioText">No bio yet</div>
+                <div class="fb-profile-stats">
+                    <span><strong id="profileFriendsCount">0</strong> friends</span>
+                    <span><strong id="profileFollowersCount">0</strong> followers</span>
+                    <span><strong id="profilePostsCount">0</strong> posts</span>
+                </div>
+            </div>
+            
+            <div class="fb-profile-actions" id="profileActions"></div>
+        </div>
+
+        <!-- Profile Navigation -->
+        <div class="fb-profile-nav">
+            <button class="fb-nav-tab active" onclick="showTab('posts', this)">Posts</button>
+            <button class="fb-nav-tab" onclick="showTab('about', this)">About</button>
+            <button class="fb-nav-tab" onclick="showTab('photos', this)">Photos</button>
+            <button class="fb-nav-tab" onclick="showTab('friends', this)">Friends</button>
+            <button class="fb-nav-tab" onclick="showTab('followers', this)">Followers</button>
+            <button class="fb-nav-tab" onclick="showTab('videos', this)">Videos</button>
+        </div>
+
+        <!-- Profile Content Body -->
+        <div class="fb-profile-content">
+            <!-- Left Column - Info -->
+            <div class="fb-profile-left-col">
+                <div class="fb-info-card" id="aboutCard">
+                    <h3>About</h3>
+                    <div class="fb-info-item"><i class="fas fa-map-marker-alt"></i> <span id="aboutLocation">Location</span></div>
+                    <div class="fb-info-item"><i class="fas fa-globe"></i> <span id="aboutWebsite">Website</span></div>
+                    <div class="fb-info-item"><i class="fas fa-briefcase"></i> <span id="aboutWork">Work</span></div>
+                    <div class="fb-info-item"><i class="fas fa-graduation-cap"></i> <span id="aboutEducation">Education</span></div>
+                    <div class="fb-info-item"><i class="fas fa-calendar"></i> <span id="aboutJoined">Joined</span></div>
+                    <div class="fb-info-item"><i class="fas fa-birthday-cake"></i> <span id="aboutBirthday">Birthday</span></div>
+                    <button onclick="editProfile()" style="width:100%; margin-top:8px; background:var(--hover); color:white; border:1px solid var(--border); padding:8px; border-radius:6px; cursor:pointer;">Edit Details</button>
+                </div>
+                
+                <div class="fb-info-card">
+                    <h3>Photos</h3>
+                    <div class="fb-photos-grid" id="photosMiniGrid"></div>
+                </div>
+                
+                <div class="fb-info-card">
+                    <h3>Friends</h3>
+                    <div class="fb-friends-mini" id="friendsMiniGrid"></div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Posts -->
+            <div class="fb-profile-right-col">
+                <!-- Status Creator (only show on own profile) -->
+                <div class="card-widget" id="ownStatusCreator" style="display:none;">
+                    <div class="status-creator">
+                        <div class="user-avatar-small" id="feedAvatar">U</div>
+                        <input type="text" id="profileStatusInput" placeholder="What's on your mind?" onkeypress="if(event.key==='Enter')createProfilePost()">
+                    </div>
+                    <div class="status-actions">
+                        <button class="status-action-btn" onclick="document.getElementById('profileMediaUpload').click()">
+                            <i class="fas fa-camera" style="color:#10b981;"></i> Photo
+                        </button>
+                        <button class="status-action-btn" onclick="createProfilePost()">
+                            <i class="fas fa-paper-plane" style="color:var(--primary);"></i> Post
+                        </button>
+                    </div>
+                    <input type="file" id="profileMediaUpload" accept="image/*,video/*" style="display:none;" onchange="handleProfileMedia(event)">
+                </div>
+                
+                <div id="profilePosts"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const profileUserId = urlParams.get('id') || getCurrentUser()?.id;
+        let profileUser = DB.users.find(u => u.id === profileUserId) || getCurrentUser();
+        let currentTab = 'posts';
+
+        function loadFullProfile() {
+            if (!profileUser) return;
+            
+            // Cover
+            if (profileUser.coverPic) {
+                document.getElementById('coverImage').src = profileUser.coverPic;
+                document.getElementById('coverImage').style.display = 'block';
+                document.getElementById('coverPlaceholder').style.display = 'none';
+            }
+            
+            // Profile Picture
+            if (profileUser.profilePic) {
+                document.getElementById('profileImage').src = profileUser.profilePic;
+                document.getElementById('profileImage').style.display = 'block';
+                document.getElementById('profileInitial').style.display = 'none';
+            } else {
+                document.getElementById('profileInitial').textContent = profileUser.avatar || profileUser.firstName?.charAt(0) || 'U';
+            }
+            
+            // Name & Verification
+            document.getElementById('profileName').textContent = profileUser.fullName;
+            if (profileUser.verified) {
+                document.getElementById('verifiedBadge').style.display = 'inline';
+            }
+            document.getElementById('profileBioText').textContent = profileUser.bio || 'No bio yet';
+            
+            // Stats
+            const friendCount = (DB.friends[profileUser.id] || []).length;
+            const followerCount = (DB.followers[profileUser.id] || []).length;
+            const postCount = DB.posts.filter(p => p.userId === profileUser.id).length;
+            
+            document.getElementById('profileFriendsCount').textContent = friendCount;
+            document.getElementById('profileFollowersCount').textContent = followerCount;
+            document.getElementById('profilePostsCount').textContent = postCount;
+            
+            // About
+            document.getElementById('aboutLocation').textContent = profileUser.location || profileUser.country || 'Not set';
+            document.getElementById('aboutWebsite').textContent = profileUser.website || 'Not set';
+            document.getElementById('aboutWork').textContent = profileUser.work || 'Not set';
+            document.getElementById('aboutEducation').textContent = profileUser.education || 'Not set';
+            document.getElementById('aboutJoined').textContent = profileUser.joined ? new Date(profileUser.joined).toLocaleDateString() : 'Unknown';
+            document.getElementById('aboutBirthday').textContent = profileUser.birthday || 'Not set';
+            
+            // Actions
+            renderActions();
+            
+            // Own status creator
+            const currentUser = getCurrentUser();
+            if (profileUser.id === currentUser?.id) {
+                document.getElementById('ownStatusCreator').style.display = 'block';
+                const feedAvatar = document.getElementById('feedAvatar');
+                if (currentUser.profilePic) {
+                    feedAvatar.innerHTML = `<img src="${currentUser.profilePic}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                } else {
+                    feedAvatar.textContent = currentUser.avatar;
+                }
+            }
+            
+            // Render content
+            renderTabContent();
+            renderPhotosMini();
+            renderFriendsMini();
+            
+            // Update header
+            const headerAvatar = document.getElementById('headerAvatar');
+            const headerUserName = document.getElementById('headerUserName');
+            if (currentUser?.profilePic && headerAvatar) {
+                headerAvatar.innerHTML = `<img src="${currentUser.profilePic}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+            }
+            if (headerUserName) headerUserName.textContent = currentUser?.firstName || 'User';
+        }
+
+        function renderActions() {
+            const currentUser = getCurrentUser();
+            const actionsDiv = document.getElementById('profileActions');
+            if (!actionsDiv) return;
+            
+            if (profileUser.id === currentUser?.id) {
+                actionsDiv.innerHTML = `
+                    <button class="fb-action-btn primary" onclick="editProfile()"><i class="fas fa-edit"></i> Edit Profile</button>
+                    <button class="fb-action-btn secondary" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i></button>
+                `;
+            } else {
+                const isFriend = DB.friends[currentUser?.id]?.includes(profileUser.id);
+                const isFollowing = DB.followers[profileUser.id]?.includes(currentUser?.id);
+                const hasRequest = DB.friendRequests[profileUser.id]?.includes(currentUser?.id);
+                
+                actionsDiv.innerHTML = `
+                    ${isFriend ? 
+                        `<button class="fb-action-btn success"><i class="fas fa-check"></i> Friends</button>
+                         <button class="fb-action-btn secondary" onclick="removeFriend('${profileUser.id}')"><i class="fas fa-user-minus"></i></button>` :
+                        hasRequest ?
+                        `<button class="fb-action-btn secondary"><i class="fas fa-clock"></i> Request Sent</button>` :
+                        `<button class="fb-action-btn primary" onclick="sendFriendRequest('${profileUser.id}')"><i class="fas fa-user-plus"></i> Add Friend</button>`
+                    }
+                    ${isFollowing ?
+                        `<button class="fb-action-btn secondary" onclick="unfollowUser()"><i class="fas fa-check"></i> Following</button>` :
+                        `<button class="fb-action-btn secondary" onclick="followUser()"><i class="fas fa-plus"></i> Follow</button>`
+                    }
+                    <button class="fb-action-btn secondary" onclick="window.location.href='messages.html'"><i class="fas fa-comment"></i> Message</button>
+                `;
+            }
+        }
+
+        function showTab(tab, el) {
+            currentTab = tab;
+            document.querySelectorAll('.fb-nav-tab').forEach(b => b.classList.remove('active'));
+            if (el) el.classList.add('active');
+            renderTabContent();
+        }
+
+        function renderTabContent() {
+            const postsDiv = document.getElementById('profilePosts');
+            const aboutCard = document.getElementById('aboutCard');
+            const photosGrid = document.getElementById('photosMiniGrid')?.parentElement;
+            const friendsGrid = document.getElementById('friendsMiniGrid')?.parentElement;
+            
+            // Hide all
+            if (postsDiv) postsDiv.style.display = 'none';
+            
+            switch(currentTab) {
+                case 'posts':
+                    if (postsDiv) postsDiv.style.display = 'block';
+                    renderProfilePosts();
+                    break;
+                case 'about':
+                    if (postsDiv) postsDiv.innerHTML = renderAboutDetailed();
+                    if (postsDiv) postsDiv.style.display = 'block';
+                    break;
+                case 'photos':
+                    if (postsDiv) postsDiv.innerHTML = renderAllPhotos();
+                    if (postsDiv) postsDiv.style.display = 'block';
+                    break;
+                case 'friends':
+                    if (postsDiv) postsDiv.innerHTML = renderAllFriends();
+                    if (postsDiv) postsDiv.style.display = 'block';
+                    break;
+                case 'followers':
+                    if (postsDiv) postsDiv.innerHTML = renderAllFollowers();
+                    if (postsDiv) postsDiv.style.display = 'block';
+                    break;
+                case 'videos':
+                    if (postsDiv) postsDiv.innerHTML = renderAllVideos();
+                    if (postsDiv) postsDiv.style.display = 'block';
+                    break;
+            }
+        }
+
+        function renderProfilePosts() {
+            const container = document.getElementById('profilePosts');
+            if (!container) return;
+            
+            const userPosts = DB.posts.filter(p => p.userId === profileUser.id);
+            
+            if (!userPosts.length) {
+                container.innerHTML = '<div class="card-widget"><p style="text-align:center; padding:20px;">No posts yet</p></div>';
+                return;
+            }
+            
+            container.innerHTML = userPosts.map(post => `
+                <div class="post-card">
+                    <div class="post-header-info">
+                        <div class="post-avatar">
+                            ${post.userProfilePic ? `<img src="${post.userProfilePic}">` : post.userAvatar}
+                        </div>
+                        <div>
+                            <strong>${post.userName}</strong> ${post.userVerified ? '<i class="fas fa-check-circle verified-check"></i>' : ''}
+                            <div style="font-size:12px; color:#64748b;">${timeAgo(post.time)} • 📍 ${post.userLocation}</div>
+                        </div>
+                    </div>
+                    <p>${post.text}</p>
+                    ${post.mediaUrl ? 
+                        (post.mediaUrl.startsWith('data:video') ? 
+                            `<video src="${post.mediaUrl}" controls class="post-media-content"></video>` :
+                            `<img src="${post.mediaUrl}" class="post-media-content">`) 
+                        : ''}
+                    <div class="post-reaction-bar">
+                        <span>👍 ${post.likes.length}</span>
+                        <span>❤️ ${post.loves.length}</span>
+                        <span>😂 ${post.laughs.length}</span>
+                        <span>💬 ${post.comments.length}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPhotosMini() {
+            const grid = document.getElementById('photosMiniGrid');
+            if (!grid) return;
+            const userPosts = DB.posts.filter(p => p.userId === profileUser.id && p.mediaUrl && !p.mediaUrl.startsWith('data:video'));
+            const photos = userPosts.slice(0, 9);
+            grid.innerHTML = photos.map(p => `<img src="${p.mediaUrl}" onclick="showTab('photos', document.querySelector('.fb-nav-tab:nth-child(3)'))">`).join('') || '<p style="font-size:12px;color:#64748b;">No photos</p>';
+        }
+
+        function renderFriendsMini() {
+            const grid = document.getElementById('friendsMiniGrid');
+            if (!grid) return;
+            const friendIds = (DB.friends[profileUser.id] || []).slice(0, 9);
+            const friends = DB.users.filter(u => friendIds.includes(u.id));
+            grid.innerHTML = friends.map(f => `
+                <div class="fb-friend-mini" onclick="viewProfile('${f.id}')">
+                    <div class="fb-friend-mini-avatar">
+                        ${f.profilePic ? `<img src="${f.profilePic}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-weight:bold;color:white;">${f.avatar}</div>`}
+                    </div>
+                    <span>${f.firstName || f.fullName}</span>
+                </div>
+            `).join('') || '<p style="font-size:12px;color:#64748b;">No friends</p>';
+        }
+
+        function createProfilePost() {
+            const input = document.getElementById('profileStatusInput');
+            const text = input?.value.trim();
+            if (!text && !window.pendingProfileMedia) return;
+            
+            const user = getCurrentUser();
+            const post = {
+                id: 'post_' + Date.now(),
+                userId: user.id,
+                userName: user.fullName,
+                userAvatar: user.avatar,
+                userProfilePic: user.profilePic,
+                userVerified: user.verified,
+                userLocation: user.location || user.country,
+                text: text || '📸 Shared media',
+                mediaUrl: window.pendingProfileMedia || null,
+                likes: [], loves: [], laughs: [], comments: [], shares: [],
+                time: new Date().toISOString()
+            };
+            
+            DB.posts.unshift(post);
+            window.pendingProfileMedia = null;
+            if (input) input.value = '';
+            saveDB();
+            renderProfilePosts();
+            loadFullProfile();
+            addNotification('📝 Post', 'New post created!');
+        }
+
+        function handleProfileMedia(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                window.pendingProfileMedia = e.target.result;
+                createProfilePost();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateCover(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profileUser.coverPic = e.target.result;
+                const userInDb = DB.users.find(u => u.id === profileUser.id);
+                if (userInDb) userInDb.coverPic = e.target.result;
+                if (profileUser.id === getCurrentUser()?.id) DB.currentUser.coverPic = e.target.result;
+                saveDB();
+                document.getElementById('coverImage').src = e.target.result;
+                document.getElementById('coverImage').style.display = 'block';
+                document.getElementById('coverPlaceholder').style.display = 'none';
+                addNotification('📸 Cover', 'Cover photo updated!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateProfilePic(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profileUser.profilePic = e.target.result;
+                const userInDb = DB.users.find(u => u.id === profileUser.id);
+                if (userInDb) userInDb.profilePic = e.target.result;
+                if (profileUser.id === getCurrentUser()?.id) DB.currentUser.profilePic = e.target.result;
+                saveDB();
+                document.getElementById('profileImage').src = e.target.result;
+                document.getElementById('profileImage').style.display = 'block';
+                document.getElementById('profileInitial').style.display = 'none';
+                loadFullProfile();
+                addNotification('📸 Profile', 'Profile picture updated!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function editProfile() {
+            const newBio = prompt('Bio:', profileUser.bio || '');
+            if (newBio !== null) profileUser.bio = newBio;
+            const newLocation = prompt('Location:', profileUser.location || '');
+            if (newLocation !== null) profileUser.location = newLocation;
+            const newWebsite = prompt('Website:', profileUser.website || '');
+            if (newWebsite !== null) profileUser.website = newWebsite;
+            const newWork = prompt('Work:', profileUser.work || '');
+            if (newWork !== null) profileUser.work = newWork;
+            const newEducation = prompt('Education:', profileUser.education || '');
+            if (newEducation !== null) profileUser.education = newEducation;
+            
+            const userInDb = DB.users.find(u => u.id === profileUser.id);
+            if (userInDb) {
+                Object.assign(userInDb, {
+                    bio: profileUser.bio,
+                    location: profileUser.location,
+                    website: profileUser.website,
+                    work: profileUser.work,
+                    education: profileUser.education
+                });
+            }
+            saveDB();
+            loadFullProfile();
+            addNotification('✏️ Profile', 'Profile updated!');
+        }
+
+        function followUser() {
+            if (!DB.followers[profileUser.id]) DB.followers[profileUser.id] = [];
+            const uid = getCurrentUser()?.id;
+            if (!DB.followers[profileUser.id].includes(uid)) {
+                DB.followers[profileUser.id].push(uid);
+                saveDB();
+                loadFullProfile();
+                addNotification('👤 Follow', 'You followed ' + profileUser.fullName);
+            }
+        }
+
+        function unfollowUser() {
+            const uid = getCurrentUser()?.id;
+            if (DB.followers[profileUser.id]) {
+                DB.followers[profileUser.id] = DB.followers[profileUser.id].filter(id => id !== uid);
+                saveDB();
+                loadFullProfile();
+            }
+        }
+
+        function toggleNotifications() {
+            const overlay = document.getElementById('notifOverlay');
+            overlay.style.display = 'flex';
+            
+            const list = document.getElementById('notifFullList');
+            if (!DB.notifications.length) {
+                list.innerHTML = '<p style="text-align:center; padding:20px; color:#64748b;">No notifications yet</p>';
+            } else {
+                list.innerHTML = DB.notifications.map(n => `
+                    <div style="padding:12px; border-bottom:1px solid var(--border); ${n.read ? '' : 'background:var(--hover); border-left:3px solid var(--primary);'}">
+                        <strong>${n.type}</strong>: ${n.text}
+                        <small style="display:block; color:#64748b;">${timeAgo(n.time)}</small>
+                    </div>
+                `).join('');
+            }
+            
+            DB.notifications.forEach(n => n.read = true);
+            saveDB();
+            updateNotificationBadge();
+        }
+
+        function clearAllNotifications() {
+            DB.notifications = [];
+            saveDB();
+            document.getElementById('notifFullList').innerHTML = '<p style="text-align:center; padding:20px; color:#64748b;">All notifications cleared</p>';
+            updateNotificationBadge();
+        }
+
+        function timeAgo(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const seconds = Math.floor((now - date) / 1000);
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+            if (seconds < 604800) return Math.floor(seconds / 86400) + 'd ago';
+            return date.toLocaleDateString();
+        }
+
+        function renderAboutDetailed() {
+            return `
+                <div class="card-widget">
+                    <h3>About ${profileUser.fullName}</h3>
+                    <p>📍 <strong>Location:</strong> ${profileUser.location || profileUser.country || 'Not set'}</p>
+                    <p>🌐 <strong>Website:</strong> ${profileUser.website || 'Not set'}</p>
+                    <p>💼 <strong>Work:</strong> ${profileUser.work || 'Not set'}</p>
+                    <p>🎓 <strong>Education:</strong> ${profileUser.education || 'Not set'}</p>
+                    <p>📅 <strong>Joined:</strong> ${profileUser.joined ? new Date(profileUser.joined).toLocaleDateString() : 'Unknown'}</p>
+                    <p>🎂 <strong>Birthday:</strong> ${profileUser.birthday || 'Not set'}</p>
+                    <p>📝 <strong>Bio:</strong> ${profileUser.bio || 'No bio'}</p>
+                </div>
+            `;
+        }
+
+        function renderAllPhotos() {
+            const posts = DB.posts.filter(p => p.userId === profileUser.id && p.mediaUrl);
+            return `
+                <div class="card-widget">
+                    <h3>Photos</h3>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:8px;">
+                        ${posts.map(p => p.mediaUrl.startsWith('data:video') ? '' : `<img src="${p.mediaUrl}" style="width:100%; border-radius:8px;">`).join('') || '<p>No photos</p>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAllFriends() {
+            const friendIds = DB.friends[profileUser.id] || [];
+            const friends = DB.users.filter(u => friendIds.includes(u.id));
+            return `
+                <div class="card-widget">
+                    <h3>Friends (${friends.length})</h3>
+                    <div class="friends-grid">
+                        ${friends.map(f => `
+                            <div class="friend-card" onclick="viewProfile('${f.id}')">
+                                <div class="friend-avatar">${f.profilePic ? `<img src="${f.profilePic}">` : f.avatar}</div>
+                                <strong>${f.fullName}</strong>
+                            </div>
+                        `).join('') || '<p>No friends yet</p>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAllFollowers() {
+            const followerIds = DB.followers[profileUser.id] || [];
+            const followers = DB.users.filter(u => followerIds.includes(u.id));
+            return `
+                <div class="card-widget">
+                    <h3>Followers (${followers.length})</h3>
+                    <div class="friends-grid">
+                        ${followers.map(f => `
+                            <div class="friend-card">
+                                <div class="friend-avatar">${f.profilePic ? `<img src="${f.profilePic}">` : f.avatar}</div>
+                                <strong>${f.fullName}</strong>
+                            </div>
+                        `).join('') || '<p>No followers yet</p>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAllVideos() {
+            const posts = DB.posts.filter(p => p.userId === profileUser.id && p.mediaUrl && p.mediaUrl.startsWith('data:video'));
+            return `
+                <div class="card-widget">
+                    <h3>Videos</h3>
+                    ${posts.map(p => `<video src="${p.mediaUrl}" controls style="width:100%; border-radius:8px; margin-bottom:8px;"></video>`).join('') || '<p>No videos</p>'}
+                </div>
+            `;
+        }
+
+        // Initialize
+        loadFullProfile();
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
