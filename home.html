@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldFG - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .news-ticker { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; overflow: hidden; white-space: nowrap; }
+        .news-ticker-content { display: inline-block; animation: ticker 40s linear infinite; color: #e2e8f0; font-size: 13px; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .news-ticker-content span { margin: 0 30px; color: var(--warning); font-weight: 600; }
+        .ad-banner { background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; padding: 12px; border-radius: 8px; margin: 8px 0; text-align: center; cursor: pointer; font-weight: 600; }
+        .youtube-embed { width: 100%; height: 220px; border-radius: 8px; border: none; margin: 8px 0; }
+        .content-label { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-left: 8px; color: white; }
+
+        /* Reaction Picker - Facebook Style */
+        .reaction-container { position: relative; display: inline-block; }
+        .reaction-picker { position: absolute; bottom: 40px; left: -20px; background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 8px 12px; display: none; gap: 6px; z-index: 500; white-space: nowrap; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+        .reaction-picker.show { display: flex; }
+        .reaction-emoji { font-size: 32px; cursor: pointer; transition: 0.15s; padding: 4px; border-radius: 50%; }
+        .reaction-emoji:hover { transform: scale(1.4); background: var(--hover); }
+        .reaction-btn-main { cursor: pointer; display: flex; align-items: center; gap: 4px; }
+
+        /* Profile Modal */
+        .profile-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .profile-modal-content { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+        .user-list-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .user-list-item:hover { background: var(--hover); }
+        .user-list-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--gradient); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 18px; }
+        .user-list-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Comment section */
+        .comment-item { display: flex; gap: 8px; margin: 8px 0; align-items: flex-start; }
+        .comment-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--gradient); overflow: hidden; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 14px; }
+        .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .comment-bubble { background: var(--dark); padding: 8px 12px; border-radius: 18px; font-size: 13px; flex: 1; }
+        .comment-name { font-weight: 600; font-size: 12px; cursor: pointer; color: var(--primary); }
+    </style>
+</head>
+<body>
+    <header class="platform-header">
+        <a href="home.html" class="platform-logo">🌍 WorldFG</a>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search..." oninput="handleSearch()">
+            <div class="search-results-dropdown" id="searchResults"></div>
+        </div>
+        <div class="nav-icons">
+            <a href="home.html" class="nav-icon active"><i class="fas fa-home"></i></a>
+            <a href="friends.html" class="nav-icon"><i class="fas fa-user-friends"></i></a>
+            <a href="marketplace.html" class="nav-icon"><i class="fas fa-store"></i></a>
+            <a href="live.html" class="nav-icon"><i class="fas fa-video"></i></a>
+            <a href="messages.html" class="nav-icon"><i class="fas fa-comment-dots"></i></a>
+        </div>
+        <div class="header-right-icons">
+            <button class="icon-badge" onclick="toggleNotifications()"><i class="fas fa-bell"></i><span class="badge-count" id="notifBadge">0</span></button>
+            <a href="profile.html" class="user-menu-trigger"><div class="user-avatar-small" id="headerAvatar">U</div><span id="headerUserName">User</span></a>
+        </div>
+    </header>
+
+    <div class="dropdown-panel" id="notifPanel" style="right:120px;"><h4>🔔 Notifications</h4><div id="notifList"><p style="color:#64748b;">No notifications</p></div></div>
+
+    <div class="main-layout">
+        <aside class="sidebar-left">
+            <div class="card-widget">
+                <a href="profile.html" class="sidebar-link-item"><div class="user-avatar-small" id="sidebarAvatar">U</div><span id="sidebarUserName">User</span></a>
+                <a href="friends.html" class="sidebar-link-item"><i class="fas fa-user-friends"></i> Friends <span id="friendCountSidebar">(0)</span></a>
+                <a href="stories.html" class="sidebar-link-item"><i class="fas fa-history"></i> Stories</a>
+                <a href="live.html" class="sidebar-link-item"><i class="fas fa-video"></i> Live</a>
+                <a href="marketplace.html" class="sidebar-link-item"><i class="fas fa-store"></i> Marketplace</a>
+                <a href="messages.html" class="sidebar-link-item"><i class="fas fa-comment-dots"></i> Messages</a>
+                <a href="settings.html" class="sidebar-link-item"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="news-ticker">
+                <div class="news-ticker-content" id="newsTicker"><span>🔴</span> Loading world news...</div>
+            </div>
+            <div class="card-widget"><div class="stories-container" id="storiesContainer"></div></div>
+            <div class="card-widget">
+                <div class="status-creator">
+                    <div class="user-avatar-small" id="feedAvatar">U</div>
+                    <input type="text" id="statusInput" placeholder="What's on your mind?" onkeypress="if(event.key==='Enter')createPost()">
+                </div>
+                <div class="status-actions">
+                    <button class="status-action-btn" onclick="goLive()"><i class="fas fa-video" style="color:#ef4444;"></i> Live</button>
+                    <button class="status-action-btn" onclick="document.getElementById('mediaUpload').click()"><i class="fas fa-camera" style="color:#10b981;"></i> Photo</button>
+                    <button class="status-action-btn" onclick="createPost()"><i class="fas fa-smile" style="color:#f59e0b;"></i> Post</button>
+                </div>
+                <input type="file" id="mediaUpload" accept="image/*,video/*" style="display:none;" onchange="handleMediaUpload(event)">
+            </div>
+            <div id="dynamicNewsFeed"></div>
+            <div id="postsContainer"></div>
+        </main>
+
+        <aside class="sidebar-right">
+            <div class="card-widget"><h4><i class="fas fa-fire"></i> Trending</h4><div id="trendingTopics"></div></div>
+            <div class="card-widget"><h4><i class="fas fa-newspaper"></i> World News</h4><div id="worldNewsSidebar"></div></div>
+            <div class="card-widget"><h4><span class="live-indicator"></span> Live Now</h4><p style="font-size:13px;color:#94a3b8;">🎵 DJ Mix • 1.2K watching</p></div>
+            <div class="card-widget"><h4>👥 People You May Know</h4><div id="friendSuggestions"></div></div>
+        </aside>
+    </div>
+
+    <div class="chat-widget-bottom" id="chatWidget" style="display:none;">
+        <div class="chat-widget-header"><span><i class="fas fa-comments"></i> Chats</span><span onclick="document.getElementById('chatWidget').style.display='none'" style="cursor:pointer;">✕</span></div>
+        <div id="chatContactsList" style="max-height:250px;overflow-y:auto;"></div>
+        <div id="chatWindowInner" style="display:none;">
+            <div style="padding:8px;background:var(--primary-dark);display:flex;justify-content:space-between;"><span id="chatPartnerLabel">Chat</span></div>
+            <div id="chatMessagesArea" style="height:250px;overflow-y:auto;padding:12px;background:var(--dark);"></div>
+            <div style="display:flex;padding:8px;gap:8px;"><input type="text" id="chatMsgInput" placeholder="Type..." style="flex:1;padding:8px;border-radius:20px;background:var(--dark);border:1px solid var(--border);color:#e2e8f0;"><button onclick="sendChatMsg()" style="background:var(--primary);border:none;color:white;padding:8px 16px;border-radius:20px;cursor:pointer;">Send</button></div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        console.log('WorldFG Home loaded');
+
+        // ============ FAKE USERS FOR DEMO ============
+        var fakeUsers = [
+            { name: 'Sarah Johnson', avatar: 'S', location: 'Lagos, Nigeria', verified: true },
+            { name: 'Mike Chen', avatar: 'M', location: 'New York, USA', verified: false },
+            { name: 'Amina Yusuf', avatar: 'A', location: 'Nairobi, Kenya', verified: true },
+            { name: 'David Silva', avatar: 'D', location: 'London, UK', verified: false },
+            { name: 'Priya Patel', avatar: 'P', location: 'Mumbai, India', verified: true },
+            { name: 'Carlos Rivera', avatar: 'C', location: 'Mexico City, Mexico', verified: false },
+            { name: 'Fatima Mohammed', avatar: 'F', location: 'Dubai, UAE', verified: true },
+            { name: 'John Anderson', avatar: 'J', location: 'Sydney, Australia', verified: false },
+            { name: 'Wei Zhang', avatar: 'W', location: 'Beijing, China', verified: true },
+            { name: 'Maria Santos', avatar: 'M', location: 'São Paulo, Brazil', verified: false },
+            { name: 'Kwame Nkrumah', avatar: 'K', location: 'Accra, Ghana', verified: true },
+            { name: 'Olga Petrova', avatar: 'O', location: 'Moscow, Russia', verified: false }
+        ];
+
+        var videoList = [
+            { id: 'Nq2wYlWFucg', title: 'BBC Global News Update', channel: 'BBC News', cat: 'news' },
+            { id: '9Auq9mYxFEE', title: 'World News Today', channel: 'Global News', cat: 'news' },
+            { id: 'FT3ODSg1GFE', title: 'Latest Tech Review', channel: 'Tech Insider', cat: 'tech' },
+            { id: 'dQw4w9WgXcQ', title: 'Trending Comedy', channel: 'Comedy Central', cat: 'comedy' },
+            { id: 'kJQP7kiw5Fk', title: 'Top Music Video', channel: 'Vevo', cat: 'music' },
+            { id: 'RgKAFK5djSk', title: 'See You Again', channel: 'Wiz Khalifa', cat: 'music' },
+            { id: 'JGwWNGJdvx8', title: 'Shape of You', channel: 'Ed Sheeran', cat: 'music' },
+            { id: 'hT_nvWreIhg', title: 'Movie Trailer 2025', channel: 'Movies', cat: 'entertainment' },
+            { id: 'CevxZvSJLk8', title: 'Nature Documentary', channel: 'Nat Geo', cat: 'nature' },
+            { id: 'XqZsoesa55w', title: 'Viral Video', channel: 'ViralHub', cat: 'viral' },
+            { id: 'eVTXPUF4Oz4', title: 'Not Afraid', channel: 'Eminem', cat: 'music' },
+            { id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody', channel: 'Queen', cat: 'music' }
+        ];
+
+        var headlinesList = [
+            'Global Markets Hit Record Highs', 'Climate Summit Reaches Historic Deal',
+            'Apple Unveils New AI Technology', 'World Cup: Shocking Upset in Finals',
+            'Scientists Discover New Planet', 'SpaceX Mars Mission Successful',
+            'African Union Launches Digital Fund', 'Olympics 2028 Adds New Sports',
+            'Nuclear Fusion Breakthrough', 'WHO Approves New Malaria Vaccine',
+            'Major Cyber Attack Thwarted', 'ISS Extended to 2035',
+            'World Bank: Poverty at Record Low', 'New Whale Species Discovered'
+        ];
+
+        var colors = { news: '#ef4444', tech: '#8b5cf6', comedy: '#f59e0b', music: '#10b981', viral: '#ec4899', entertainment: '#3b82f6', nature: '#059669' };
+
+        // Store reaction data per post
+        var postReactions = {};
+
+        function shuffle(arr) { var a = arr.slice(); for (var i = a.length-1; i>0; i--) { var j = Math.floor(Math.random()*(i+1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+        function getRandom(arr, n) { return shuffle(arr).slice(0, n); }
+        function formatNum(n) { if (n>=1000000) return (n/1000000).toFixed(1)+'M'; if (n>=1000) return (n/1000).toFixed(1)+'K'; return n; }
+        function getTime() { var m = Math.floor(Math.random()*59)+1; var h = Math.floor(Math.random()*12)+1; return Math.random()>0.6 ? m+' minutes ago' : h+' hour'+(h>1?'s':'')+' ago'; }
+
+        // ============ REACTION PICKER ============
+        var activeReactionPicker = null;
+        var reactionHoldTimer = null;
+
+        function showReactionPicker(event, postId) {
+            event.preventDefault();
+            event.stopPropagation();
+            closeAllReactionPickers();
+            var picker = document.getElementById('reaction-picker-' + postId);
+            if (picker) {
+                picker.classList.add('show');
+                activeReactionPicker = picker;
+            }
+        }
+
+        function closeAllReactionPickers() {
+            var pickers = document.querySelectorAll('.reaction-picker');
+            for (var i = 0; i < pickers.length; i++) {
+                pickers[i].classList.remove('show');
+            }
+            activeReactionPicker = null;
+        }
+
+        function selectReaction(postId, emoji, type) {
+            if (!postReactions[postId]) {
+                postReactions[postId] = { type: 'like', emoji: '👍' };
+            }
+            postReactions[postId] = { type: type, emoji: emoji };
+            closeAllReactionPickers();
+            updateReactionDisplay(postId);
+            alert('✅ Reacted with ' + emoji + ' ' + type + '!');
+        }
+
+        function updateReactionDisplay(postId) {
+            var display = document.getElementById('reaction-display-' + postId);
+            if (display && postReactions[postId]) {
+                display.textContent = postReactions[postId].emoji + ' ' + postReactions[postId].type;
+                display.style.color = '#2563eb';
+                display.style.fontWeight = 'bold';
+            }
+        }
+
+        // ============ SHOW WHO REACTED ============
+        function showWhoReacted(postId) {
+            var users = getRandom(fakeUsers, Math.floor(Math.random()*6)+2);
+            var modal = document.createElement('div');
+            modal.className = 'profile-modal';
+            modal.innerHTML = '<div class="profile-modal-content">' +
+                '<h3 style="margin-bottom:12px;">👥 People Who Reacted</h3>' +
+                users.map(function(u) {
+                    return '<div class="user-list-item" onclick="viewUserProfile(\'' + u.name + '\')">' +
+                        '<div class="user-list-avatar">' + u.avatar + '</div>' +
+                        '<div style="flex:1;"><strong>' + u.name + '</strong> ' + (u.verified ? '<i class="fas fa-check-circle" style="color:#1877f2;font-size:12px;"></i>' : '') + '<div style="font-size:11px;color:#64748b;">📍 ' + u.location + '</div></div>' +
+                        '<button onclick="event.stopPropagation();sendFriendReq(\'' + u.name + '\')" style="background:var(--primary);color:white;border:none;padding:6px 14px;border-radius:16px;cursor:pointer;font-size:12px;">+ Follow</button>' +
+                    '</div>';
+                }).join('') +
+                '<button onclick="this.parentElement.parentElement.remove()" style="width:100%;margin-top:12px;padding:10px;background:var(--border);color:white;border:none;border-radius:8px;cursor:pointer;">Close</button>' +
+            '</div>';
+            modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+            document.body.appendChild(modal);
+        }
+
+        // ============ SHOW COMMENTS SECTION ============
+        function showCommentsSection(postId) {
+            var div = document.getElementById('comments-' + postId);
+            if (div) div.style.display = div.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function addCommentToPost(postId) {
+            var inp = document.getElementById('inp-' + postId);
+            if (!inp || !inp.value.trim()) return;
+            var user = getCurrentUser();
+            var userName = user ? user.fullName : 'You';
+            var div = document.getElementById('comments-' + postId);
+            if (div) {
+                div.innerHTML += '<div class="comment-item">' +
+                    '<div class="comment-avatar" onclick="viewUserProfile(\'' + userName + '\')">' + (userName.charAt(0)) + '</div>' +
+                    '<div class="comment-bubble"><span class="comment-name" onclick="viewUserProfile(\'' + userName + '\')">' + userName + '</span> ' + inp.value.trim() + '</div>' +
+                '</div>';
+                div.style.display = 'block';
+            }
+            inp.value = '';
+            alert('✅ Comment posted!');
+        }
+
+        function viewUserProfile(name) {
+            alert('👤 Viewing profile of ' + name + '\n\n📍 Location available\n📝 Posts visible\n\n(Profile page would open here)');
+        }
+
+        function sendFriendReq(name) {
+            alert('✅ Friend request sent to ' + name + '!');
+        }
+
+        // ============ BUILD FEED ============
+        function buildContent() {
+            var videos = getRandom(videoList, 5);
+            var headlines = getRandom(headlinesList, 8);
+
+            var ticker = document.getElementById('newsTicker');
+            if (ticker) ticker.innerHTML = headlines.slice(0,5).map(function(h){ return '<span>🔴</span> ' + h + ' |'; }).join(' ') + ' <span>📰 ' + getTime() + '</span>';
+
+            var trending = document.getElementById('trendingTopics');
+            if (trending) trending.innerHTML = headlines.slice(0,5).map(function(h){
+                return '<div class="trending-item"><strong>#' + h.replace(/[^a-zA-Z0-9]/g,'').substring(0,15) + '</strong><span>' + formatNum(Math.floor(Math.random()*2000+100)) + 'K posts</span></div>';
+            }).join('');
+
+            var wn = document.getElementById('worldNewsSidebar');
+            if (wn) wn.innerHTML = headlines.map(function(h){ return '<div class="trending-item"><strong>🌍 ' + h + '</strong><span>' + getTime() + '</span></div>'; }).join('');
+
+            var feed = document.getElementById('dynamicNewsFeed');
+            if (feed) {
+                feed.innerHTML = videos.map(function(v, i){
+                    var likes = Math.floor(Math.random()*50000)+1000;
+                    var comments = Math.floor(Math.random()*5000)+50;
+                    var shares = Math.floor(Math.random()*20000)+500;
+                    var pid = 'vid_' + i + '_' + Math.floor(Math.random()*99999);
+                    var col = colors[v.cat] || '#3b82f6';
+                    var commentUsers = getRandom(fakeUsers, Math.floor(Math.random()*3)+1);
+
+                    if (!postReactions[pid]) postReactions[pid] = { type: 'Like', emoji: '👍' };
+
+                    return '<div class="post-card" style="margin-bottom:12px;">' +
+                        '<div class="post-header-info">' +
+                            '<div class="post-avatar" style="background:'+col+';display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">' + v.channel.charAt(0) + '</div>' +
+                            '<div>' +
+                                '<strong>' + v.channel + ' <span class="content-label" style="background:'+col+';">' + v.cat.toUpperCase() + '</span></strong>' +
+                                '<i class="fas fa-check-circle" style="color:#1877f2;font-size:12px;"></i>' +
+                                '<div style="font-size:12px;color:#64748b;">Sponsored • ' + getTime() + ' • 🌍 Worldwide</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<p>' + v.title + '</p>' +
+                        '<iframe class="youtube-embed" src="https://www.youtube.com/embed/' + v.id + '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' +
+                        // Reaction bar
+                        '<div style="display:flex;justify-content:space-around;align-items:center;padding:10px 0;border-top:1px solid var(--border);margin-top:8px;font-size:13px;position:relative;">' +
+                            // Like button with hold for reaction picker
+                            '<div class="reaction-container">' +
+                                '<span class="reaction-btn-main" id="reaction-display-' + pid + '" ' +
+                                    'onmousedown="reactionHoldTimer=setTimeout(function(){showReactionPicker(event,\''+pid+'\')},500)" ' +
+                                    'onmouseup="clearTimeout(reactionHoldTimer)" ' +
+                                    'onmouseleave="clearTimeout(reactionHoldTimer)" ' +
+                                    'ontouchstart="reactionHoldTimer=setTimeout(function(){showReactionPicker(event,\''+pid+'\')},500)" ' +
+                                    'ontouchend="clearTimeout(reactionHoldTimer)" ' +
+                                    'onclick="if(!activeReactionPicker)selectReaction(\''+pid+'\',\'👍\',\'Like\')" ' +
+                                    'style="cursor:pointer;">👍 Like (' + formatNum(likes) + ')</span>' +
+                                '<div class="reaction-picker" id="reaction-picker-' + pid + '">' +
+                                    '<span class="reaction-emoji" onclick="selectReaction(\''+pid+'\',\'👍\',\'Like\')" title="Like">👍</span>' +
+                                    '<span class="reaction-emoji" onclick="selectReaction(\''+pid+'\',\'❤️\',\'Love\')" title="Love">❤️</span>' +
+                                    '<span class="reaction-emoji" onclick="selectReaction(\''+pid+'\',\'😂\',\'Haha\')" title="Haha">😂</span>' +
+                                    '<span class="reaction-emoji" onclick="selectReaction(\''+pid+'\',\'😮\',\'Wow\')" title="Wow">😮</span>' +
+                                    '<span class="reaction-emoji" onclick="selectReaction(\''+pid+'\',\'😢\',\'Sad\')" title="Sad">😢</span>' +
+                                    '<span class="reaction-emoji" onclick="selectReaction(\''+pid+'\',\'😡\',\'Angry\')" title="Angry">😡</span>' +
+                                '</div>' +
+                            '</div>' +
+                            '<span onclick="showWhoReacted(\''+pid+'\')" style="cursor:pointer;">👥 ' + formatNum(likes) + ' reactions</span>' +
+                            '<span onclick="showCommentsSection(\''+pid+'\')" style="cursor:pointer;">💬 Comment (' + formatNum(comments) + ')</span>' +
+                            '<span onclick="alert(\'✅ Shared to your timeline!\')" style="cursor:pointer;">🔄 Share (' + formatNum(shares) + ')</span>' +
+                        '</div>' +
+                        // Comments section
+                        '<div id="comments-' + pid + '" style="display:none;margin-top:8px;">' +
+                            commentUsers.map(function(u) {
+                                return '<div class="comment-item">' +
+                                    '<div class="comment-avatar" onclick="viewUserProfile(\'' + u.name + '\')">' + u.avatar + '</div>' +
+                                    '<div class="comment-bubble">' +
+                                        '<span class="comment-name" onclick="viewUserProfile(\'' + u.name + '\')">' + u.name + '</span> ' +
+                                        ['Great content! 🔥', 'Love this! ❤️', 'Amazing video! 😍', 'So cool! 🙌', 'Keep it up! 💪'][Math.floor(Math.random()*5)] +
+                                    '</div>' +
+                                '</div>';
+                            }).join('') +
+                            '<div style="display:flex;gap:8px;margin-top:8px;">' +
+                                '<input type="text" id="inp-' + pid + '" placeholder="Write a comment..." style="flex:1;padding:8px;border-radius:20px;background:var(--dark);border:1px solid var(--border);color:#e2e8f0;outline:none;">' +
+                                '<button onclick="addCommentToPost(\'' + pid + '\')" style="background:var(--primary);color:white;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;">Send</button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            }
+        }
+
+        // Close reaction picker on outside click
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.reaction-container')) {
+                closeAllReactionPickers();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Building feed...');
+            buildContent();
+        });
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
